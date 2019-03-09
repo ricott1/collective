@@ -10,6 +10,7 @@ contract FundingToken is ContinuousToken {
     uint256 public timeframe;
     uint256 public totalFunds;
     uint constant public winnerListSize = 3;
+    uint256[winnerListSize] public rankingPrizePerThousand;
     uint256 constant public contractFeePerThousand = 1;
 
     event Voting(
@@ -45,15 +46,17 @@ contract FundingToken is ContinuousToken {
     constructor(uint256 _reserveRatio, uint256 _timeframe) ContinuousToken(_reserveRatio) public {
         timeframe = _timeframe;
         totalFunds = 0;
-    }    
+        rankingPrizePerThousand = [uint256(550), uint256(300), uint256(150)];//should be initialized from a function using winnerListSize and a decreasing multiplier
+    }
 
     function burnExtraFunds (uint256 _amount) 
         internal onlyOwner 
         returns(bool res)
     {
-        burn(_amount);
+        burn(_amount)
         return true;
     }
+    
 
     function isProject(address addr) 
         public 
@@ -227,7 +230,7 @@ contract FundingToken is ContinuousToken {
     {
         Project memory p = projects[addr];
         //check if the project reached the minFunding
-        if (p.funds >= p.minFunding) {
+        if (p.funds >= p.minFunds) {
             if (winnerList.length < winnerListSize) {
                 
                 winnerList.push(addr);
@@ -302,13 +305,12 @@ contract FundingToken is ContinuousToken {
         require (prizeIndex >= 0 && prizeIndex < winnerListSize, "Prize not present");
         
         uint256 propPrizePerThousand = 1000 * funds/ totalFunds;
-        uint256 prizeModPerThousand = getRankingPrizePerThousand(prizeIndex, winnerList.length) + propPrizePerThousand;
+        uint256 prizeModPerThousand = rankingPrizePerThousand[prizeIndex] + propPrizePerThousand;
         uint256 _prize = calculateModifiedTotalPrize() * prizeModPerThousand/1000/2;//the 2 is because we assign half funds proportionally and half based on ranking.
         //this are all rounded down numbers, in this case it is fine (we are not gonna spend all of the totalFunds).
 
         return _prize;
     }          
-
 
     //returns rangking prizes modifier dividing them as (total # of prizes - prizeIndex)**2/normalization
     function getRankingPrizePerThousand (uint prizeIndex, uint n) 
