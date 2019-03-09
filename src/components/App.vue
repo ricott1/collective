@@ -85,6 +85,10 @@ export default {
   width: 64px;
   align-self: stretch;
   color: white;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
 }
   html {
     background: rgb(248, 249, 251);
@@ -113,7 +117,8 @@ export default {
     /*max-width: 960px;*/
     min-width: 1020px;
     margin: auto;
-    min-height: 100vh;
+    height: 100vh;
+    padding-left: 64px;
   }
   .router-view {
     flex: 1;
