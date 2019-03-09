@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.2;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
@@ -9,8 +9,8 @@ contract FundingToken is ContinuousToken {
 
     uint256 public timeframe;
     uint256 public totalFunds;
-    uint constant public winnerListSize = 2;
-    uint256 constant public contractFee = 5;
+    uint constant public winnerListSize = 3;
+    uint256 constant public contractFeePerThousand = 1;
 
     event Voting(
         address _from,
@@ -22,16 +22,22 @@ contract FundingToken is ContinuousToken {
         address  _addr
     );
 
+    event FundDistributed(
+        address addr, 
+        uint256 fund
+    );
+    
+
     struct Project {
-        uint256 votes; 
-        uint256 minPayment;
-        uint256 maxPayment; 
+        uint256 funds; 
+        uint256 minFunding;
         uint field;
         uint256 time;
         uint pointer;      
     }
 
     mapping (address => Project) public projects;
+    mapping (address => uint) public subscriptions;
     address[] public projectList;
     address[] public winnerList;
 
@@ -39,6 +45,14 @@ contract FundingToken is ContinuousToken {
     constructor(uint256 _reserveRatio, uint256 _timeframe) ContinuousToken(_reserveRatio) public {
         timeframe = _timeframe;
         totalFunds = 0;
+    }    
+
+    function burnExtraFunds (uint256 _amount) 
+        internal onlyOwner 
+        returns(bool res)
+    {
+        burn(_amount);
+        return true;
     }
 
     function isProject(address addr) 
@@ -55,41 +69,41 @@ contract FundingToken is ContinuousToken {
     function getProjectByAddress(address addr)
         public
         view
-        returns(uint256 votes, uint256 min, uint256 max, uint field, uint256 time)
+        returns(uint256 funds, uint256 min, uint field, uint256 time)
     {
         Project memory p = projects[addr];
-        return (p.votes, p.minPayment, p.maxPayment, p.field, p.time);
+        return (p.funds, p.minFunding, p.field, p.time);
     }
 
     function getProjectByIndex(uint index)
         public
         view
-        returns(uint256 votes, uint256 min, uint256 max, uint field, uint256 time)
+        returns(uint256 funds, uint256 min, uint field, uint256 time)
     {
         require (index >= 0 && index < getProjectCount(), "Invalid index");
         address _addr = projectList[index];
         Project memory p = projects[_addr];
-        return (p.votes, p.minPayment, p.maxPayment, p.field, p.time);
+        return (p.funds, p.minFunding, p.field, p.time);
     }
 
     function getProjectVotesByAddress(address addr)
         public
         view
-        returns(uint256 votes)
+        returns(uint256 funds)
     {
         Project memory p = projects[addr];
-        return p.votes;
+        return p.funds;
     }
 
     function getProjectVotesByIndex(uint index)
         public
         view
-        returns(uint256 votes)
+        returns(uint256 funds)
     {
         require (index >= 0 && index < getProjectCount(), "Invalid index");
         address _addr = projectList[index];
         Project memory p = projects[_addr];
-        return p.votes;
+        return p.funds;
     }
 
     function getProjectPointerByAddress(address addr)
@@ -109,21 +123,22 @@ contract FundingToken is ContinuousToken {
         //transfer amount to smart contract
         transfer(owner(), amount);
         totalFunds += amount;
-        projects[addr].votes += amount;
+        projects[addr].funds += amount;
         //update winnerList
         updateWinnerList(addr);
         emit Voting(msg.sender, addr, amount);
         return true;
     }
 
-    function newProject (uint256 min, uint256 max, uint field) 
+    function newProject (uint256 min,  uint field) 
     //can create or fund a project only when not distributing
-        external returns(bool res)  
+        external 
+        returns(bool res)  
     {
         require(msg.sender != owner(), "Contract owner cannot create a new project");
         //check the user didn't submit another project already. We are gonna extend this to allow for multiple projects per user/account (maybe)
         require(!isProject(msg.sender), "Applicant already sent a project, delete it before submitting a new one");
-        Project memory _newProject = Project({votes:0, minPayment:min, maxPayment:max, field:field, time:now, pointer:0});
+        Project memory _newProject = Project({funds:0, minFunding:min, field:field, time:now, pointer:0});
         projects[msg.sender] = _newProject;
         projects[msg.sender].pointer = projectList.push(msg.sender) - 1;
         emit NewProject(msg.sender);
@@ -151,34 +166,77 @@ contract FundingToken is ContinuousToken {
         public onlyOwner 
         returns(bool res) 
     {
-        uint256 prize = calculatePrize();
-        uint wIndex = findMostVotedIndex();
-        address wAddr = winnerList[wIndex];
-        //make sure ties get the same prize
 
+        require (winnerList.length == winnerListSize);
+        
+        //make sure ties get the same prize. Right now is time ordered (not even sure)
+        uint256 extraFunds = totalFunds;
         for (uint i=0; i<winnerList.length; i++) {
-            Project memory p = projects[winnerList[i]];
-            p.votes = 0;
+            //popWinner, it returns the most voted project address and removes it from the winnerList
+            address wAddress = popWinner();
+            Project memory p = projects[wAddress];
+            uint256 wPrize = calculatePrize(i, p.funds);
+            transfer(wAddress, wPrize);
+            extraFunds -= wPrize;
+            emit FundDistributed(wAddress, wPrize);
         }
         winnerList.length = 0;
-        transfer(wAddr, prize);
+
+        resetVotes();
+        burnExtraFunds(extraFunds);
         totalFunds = 0;
         
         return true;
     }
 
+    function resetVotes() 
+        internal view
+        returns(bool res)  
+    {
+        //reset funds to 0
+        for (uint i=0; i<projectList.length; i++) {
+            //popWinner, it returns the most voted project and removes it from the winnerList
+            Project memory p = projects[projectList[i]];
+            p.funds = 0;
+        }
+
+        return true;
+    }
+    
+
+    function popWinner () 
+        internal
+        returns(address wAddress)  
+    {
+        uint wIndex = findMostVotedIndex();
+        address wAddr = winnerList[wIndex];
+        //remove winner from winnerList
+        if(wIndex != winnerList.length - 1) {
+            //copy last project to wIndex
+            winnerList[wIndex] = winnerList[winnerList.length - 1];
+        }
+        //remove last project
+        winnerList.length--;
+        return wAddr;
+        
+    }
+    
     function updateWinnerList(address addr) 
         internal 
         returns(bool res)
     {
         Project memory p = projects[addr];
-        if (winnerList.length < winnerListSize) {
-            winnerList.push(addr);
-        } else {
-            uint index = findLeastVotedIndex();
-            if(projects[winnerList[index]].votes < p.votes) {
-                winnerList[index] = addr;
-            }     
+        //check if the project reached the minFunding
+        if (p.funds >= p.minFunding) {
+            if (winnerList.length < winnerListSize) {
+                
+                winnerList.push(addr);
+            } else {
+                uint index = findLeastVotedIndex();
+                if(projects[winnerList[index]].funds < p.funds) {
+                    winnerList[index] = addr;
+                }     
+            }
         }
 
         return true;
@@ -193,13 +251,13 @@ contract FundingToken is ContinuousToken {
         
         uint _index = 0;
         Project memory p = projects[winnerList[_index]];
-        uint256 smallest = p.votes;
+        uint256 smallest = p.funds;
 
         for (uint i=winnerList.length - 1; i>=0; i--) {
             p = projects[winnerList[i]];
-            if(p.votes < smallest) {
+            if(p.funds < smallest) {
                 _index = i;
-                smallest = p.votes;
+                smallest = p.funds;
             }
         }
 
@@ -215,28 +273,49 @@ contract FundingToken is ContinuousToken {
         
         uint _index = 0;
         Project memory p = projects[winnerList[_index]];
-        uint256 largest = p.votes;
+        uint256 largest = p.funds;
 
         for (uint i=winnerList.length - 1; i>=0; i--) {
             p = projects[winnerList[i]];
-            if(p.votes > largest) {
+            if(p.funds > largest) {
                 _index = i;
-                largest = p.votes;
+                largest = p.funds;
             }
         }
 
         return _index;
     }
     
-    function calculatePrize () 
+    function calculateModifiedTotalPrize () 
         view internal
         returns(uint256 prize) 
     {
-        return totalFunds * (100 - contractFee) / 100;
+        return totalFunds * (1000 - contractFeePerThousand) / 1000;
     }
-    
-    
+
+    function calculatePrize (uint prizeIndex, uint256 funds) 
+        view public
+        returns(uint256 prize) 
+    {
+        
+        require (funds <= totalFunds, "Funds are more than the total funds pool");
+        require (prizeIndex >= 0 && prizeIndex < winnerListSize, "Prize not present");
+        
+        uint256 propPrizePerThousand = 1000 * funds/ totalFunds;
+        uint256 prizeModPerThousand = getRankingPrizePerThousand(prizeIndex, winnerList.length) + propPrizePerThousand;
+        uint256 _prize = calculateModifiedTotalPrize() * prizeModPerThousand/1000/2;//the 2 is because we assign half funds proportionally and half based on ranking.
+        //this are all rounded down numbers, in this case it is fine (we are not gonna spend all of the totalFunds).
+
+        return _prize;
+    }          
 
 
-          
+    //returns rangking prizes modifier dividing them as (total # of prizes - prizeIndex)**2/normalization
+    function getRankingPrizePerThousand (uint prizeIndex, uint n) 
+        internal pure
+        returns(uint256 rp) 
+    {
+        uint256 norm = n * (2*n**2 + 3*n + 1) / 6;
+        return 1000*(n - prizeIndex)**2/norm;
+    }
 }
