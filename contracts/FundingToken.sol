@@ -39,6 +39,7 @@ contract FundingToken is ContinuousToken {
 
     mapping (address => Project) public projects;
     mapping (address => uint) public subscriptions;
+    mapping (address => uint256) public lastSubscriptionTime;
     mapping (address => address[]) public fundedProjects;
     address[] public projectList;
     address[] public winnerList;
@@ -51,7 +52,12 @@ contract FundingToken is ContinuousToken {
     
     function mintFor(address _beneficiary) public payable validGasPrice {
         require(msg.value > 0, "Must send ether to buy tokens.");
-        subscriptions[_beneficiary] += 1;
+        if (now - lastSubscriptionTime[_beneficiary] > 2 * timeframe) {
+            subscriptions[_beneficiary] = 1;
+        } else if (now - lastSubscriptionTime[_beneficiary] >= timeframe){
+            subscriptions[_beneficiary] += 1;
+        }
+        
         uint256 _subscriptionModifier = getSubscriptionModifier(subscriptions[_beneficiary]);
         _continuousMint(msg.value * _subscriptionModifier/100, _beneficiary);
     }
