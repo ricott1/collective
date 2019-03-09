@@ -16,7 +16,7 @@
     "@babel/runtime": "7.0.0-beta.55",
     "@portis/web3": "^2.0.0-beta.15",
     "ajv": "^6.9.1",
-    "bip39": "^2.4.0",
+    "bip39": "^2.5.0",
     "bootstrap": "^4.3.1",
     "bootstrap-vue": "^2.0.0-rc.14",
     "eslint-plugin-node": "^8.0.1",
