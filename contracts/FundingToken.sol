@@ -55,6 +55,7 @@ contract FundingToken is ContinuousToken {
         uint256 _subscriptionModifier = getSubscriptionModifier(subscriptions[_beneficiary]);
         _continuousMint(msg.value * _subscriptionModifier/100, _beneficiary);
     }
+    
 
     function getSubscriptionModifier(uint _subscriptionPeriod) 
         internal pure 
