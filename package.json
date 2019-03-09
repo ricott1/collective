@@ -15,6 +15,7 @@
   "dependencies": {
     "@babel/runtime": "7.0.0-beta.55",
     "@portis/web3": "^2.0.0-beta.15",
+    "@skalenetwork/filestorage-js": "^0.1.0",
     "ajv": "^6.9.1",
     "bip39": "^2.5.0",
     "bootstrap": "^4.3.1",

@@ -38,6 +38,14 @@ module.exports = {
       network_id: "*", // Match any network id. You may need to replace * with your network Id
       from: "", // Add your unlocked account within the double quotes
       gas: 444444400
+    },
+    skale: {
+      provider: new Web3.providers.HttpProvider(
+        "http://104.248.242.122:8003/"
+      ),
+      gasPrice: 0,
+      gas: 8000000,
+      network_id: "*"
     }
   },
   compilers: {
