@@ -191,38 +191,36 @@ contract Subscription {
         bytes memory signature //proof the subscriber signed the meta trasaction
     )
         public
+        payable
         returns (bool success)
     {
-        // bytes32 subscriptionHash = getSubscriptionHash(
-        //     from, to, tokenAddress, tokenAmount, periodSeconds, gasPrice, nonce
-        // );
-
-        // // make sure the subscription is valid and ready
-        // require( isSubscriptionReady(from, to, tokenAddress, tokenAmount, periodSeconds, gasPrice, nonce, signature), "Subscription is not ready or conditions of transction are not met" );
-
-        //increment the timestamp by the period so it wont be valid until then
-        // nextValidTimestamp[subscriptionHash] = block.timestamp.add(periodSeconds);
-
-        emit ExecuteSubscription(
+        bytes32 subscriptionHash = getSubscriptionHash(
             from, to, tokenAddress, tokenAmount, periodSeconds, gasPrice, nonce
         );
+
+        // make sure the subscription is valid and ready
+        require( isSubscriptionReady(from, to, tokenAddress, tokenAmount, periodSeconds, gasPrice, nonce, signature), "Subscription is not ready or conditions of transction are not met" );
+
+        // increment the timestamp by the period so it wont be valid until then
+        nextValidTimestamp[subscriptionHash] = block.timestamp.add(periodSeconds);
+
         // now, let make the transfer from the subscriber to the publisher
         uint256 startingBalance = ERC20(tokenAddress).balanceOf(to);
-        emit ExecuteSubscription(
-            from, to, tokenAddress, tokenAmount, periodSeconds, gasPrice, nonce
-        );
+
+        //
         fundingToken.mintFor.value(tokenAmount)(from);
-        // ERC20(tokenAddress).transferFrom(from,to,tokenAmount);
+        //
+        ERC20(tokenAddress).transferFrom(from,to,tokenAmount);
 
-        // require(
-        //   (startingBalance+tokenAmount) == ERC20(tokenAddress).balanceOf(to),
-        //   "ERC20 Balance did not change correctly"
-        // );
+        require(
+          (startingBalance+tokenAmount) == ERC20(tokenAddress).balanceOf(to),
+          "ERC20 Balance did not change correctly"
+        );
 
-        // require(
-        //   checkSuccess(),
-        //   "Subscription::executeSubscription TransferFrom failed"
-        //   );
+        require(
+          checkSuccess(),
+          "Subscription::executeSubscription TransferFrom failed"
+          );
 
 
         emit ExecuteSubscription(

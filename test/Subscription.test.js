@@ -7,7 +7,7 @@ contract('FundingToken subscription tests', async accounts => {
     const relay = accounts[8]
     const proxy = accounts[9]
 
-    it('...test subscription', async () => {
+    it('...test subscription in return for FundingTokens', async () => {
         // let testTokenInstance = await TestToken.deployed()
 
         let fromAddress = accounts[3]
@@ -110,17 +110,54 @@ contract('FundingToken subscription tests', async accounts => {
                             .call()
                         assert.isFalse(isActive, 'Subscription should not be active yet')
 
+                        let ftBalance1 = await fundingTokenInstance.balanceOf(fromAddress)
+
+                        let proxyBalance1 = await ttInstance.methods
+                            .balanceOf(fundingTokenInstance.address)
+                            .call()
                         // execute subscription
                         await subContractInstance.methods
                             .executeSubscription(...subscriptionArgs)
-                            .send({ from: proxy })
+                            .send({ from: proxy, gas: 844444400, value: tokenAmount })
                         // call mintFor directly
                         // await fundingTokenInstance.mintFor(fromAddress, {
                         //     from: fromAddress,
                         //     value: tokenAmount,
                         // })
-                        ftBalance = await fundingTokenInstance.balanceOf(fromAddress)
-                        assert.equal(ftBalance.toNumber(), 0, 'Initial supply to zero.')
+                        let ftBalance2 = await fundingTokenInstance.balanceOf(fromAddress)
+                        assert.isTrue(
+                            ftBalance2.toNumber() > ftBalance1.toNumber(),
+                            'Initial supply to zero.'
+                        )
+
+                        let proxyBalance2 = await ttInstance.methods
+                            .balanceOf(fundingTokenInstance.address)
+                            .call()
+                        assert.equal(
+                            proxyBalance1,
+                            proxyBalance2 - tokenAmount,
+                            'Amounts should be increased.'
+                        )
+
+                        isActive = await subContractInstance.methods
+                            .isSubscriptionActive(subscriptionHash, 10)
+                            .call()
+                        assert.isTrue(isActive, 'Subscription should now be active')
+                        isReady = await subContractInstance.methods
+                            .isSubscriptionReady(...subscriptionArgs)
+                            .call()
+                        assert.isFalse(isReady, 'Subscription should not be ready again')
+
+                        // try to execute it anyway --> it should trow an error
+                        try {
+                            await subContractInstance.methods
+                                .executeSubscription(...subscriptionArgs)
+                                .send({ from: proxy, gas: 844444400, value: tokenAmount })
+                            assert.fail('Should throw error.')
+                        } catch (error) {
+                            const revertFound = error.message.search('revert') >= 0
+                            assert.isTrue(revertFound, `Expected "revert", got ${error} instead`)
+                        }
                     })
             })
     })
