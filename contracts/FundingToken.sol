@@ -176,7 +176,7 @@ contract FundingToken is ContinuousToken {
     }
 
     function resetVotes() 
-        internal
+        internal view
         returns(bool res)  
     {
         //reset votes to 0
