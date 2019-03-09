@@ -27,6 +27,7 @@
       <div class="form--one-line d-flex align-items-center flex-column m-5">
         <input type="text" v-model="newForm.title" placeholder="Title">
         <input type="text" v-model="newForm.description" placeholder="Description">
+        <input type="text" v-model="newForm.minAmount" placeholder="Minimum amount">
         <!-- <input type="text" v-model="newForm.image"> -->
       </div>
 
@@ -65,7 +66,8 @@ export default {
       newForm: {
         title: null,
         description: null,
-        image: null
+        image: null,
+        minAmount: 0
       },
     }
   },
@@ -74,20 +76,17 @@ export default {
       this.selectedCategory = i;
     },
     addProject() {
-      // if (this.$store.state.web3.instance) {
-      //   const Contract = contract(ContinuousToken)
-      //   Contract.setProvider(this.$store.state.web3.instance().currentProvider)
-      //   Contract.deployed().then(contractInstance => {
-      //     console.log(contractInstance)
-      //   }).catch(err => {
-      //     console.log(err)
-      //   })
-      // }
       if (this.$store.state.web3.instance) {
+        const web3 = this.$store.state.web3;
         const Contract = contract(FundingToken)
         Contract.setProvider(this.$store.state.web3.instance().currentProvider)
         Contract.deployed().then(contractInstance => {
-          console.log(contractInstance)
+          web3.instance().eth.getAccounts((error, accounts) => {
+            contractInstance.newProject(this.newForm.minAmount, this.selectedCategory, {from: accounts[0]}).then(ret => {
+              console.log("done");
+            })
+          });
+
         }).catch(err => {
           console.log(err)
         })

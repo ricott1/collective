@@ -51,7 +51,7 @@ const startUpImage = require('@/assets/start-up.svg')
 const cameraImage = require('@/assets/video-camera.svg')
 
 import contract from 'truffle-contract'
-import ContinuousToken from '../../build/contracts/ContinuousToken.json'
+import FundingToken from '../../build/contracts/FundingToken.json'
 import { mapState } from "vuex"
 
 export default {
@@ -60,6 +60,11 @@ export default {
     ...mapState({
       categories: state => state.categories
     })
+  },
+  data () {
+    return {
+      projects: []
+    }
   },
   components: {
     HeaderTemplate,
@@ -79,10 +84,22 @@ export default {
   },
   mounted() {
     if (this.$store.state.web3.instance) {
-      const Contract = contract(ContinuousToken)
+      const web3 = this.$store.state.web3.instance()
+      const Contract = contract(FundingToken)
+
       Contract.setProvider(this.$store.state.web3.instance().currentProvider)
       Contract.deployed().then(contractInstance => {
-        console.log(contractInstance)
+        web3.eth.getAccounts((error, accounts) => {
+          console.log(contractInstance);
+          contractInstance.getProjectCount({from: accounts[0]}).then(count => {
+            console.log(count.toNumber())
+            for (var i = 0; i < count.toNumber(); i++) {
+              contractInstance.getProjectByIndex(i).then(ret => {
+                projects.push(ret)
+              })
+            }
+          }).catch(err => console.log(err))
+        });
       }).catch(err => {
         console.log(err)
       })
