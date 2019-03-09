@@ -11,6 +11,12 @@
 </template>
 
 <script>
+import Portis from '@portis/web3';
+import Web3 from 'web3';
+
+const portis = new Portis('65f17f53-fe42-4c18-95a1-500242c3a467', 'mainnet');
+const web3 = new Web3(portis.provider);
+
 export default {
   name: 'App',
   props: {

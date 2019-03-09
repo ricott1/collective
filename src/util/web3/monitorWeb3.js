@@ -1,6 +1,7 @@
 import Web3 from 'web3'
 import store from '../../store/'
 import { ACTION_TYPES, APPROVED_NETWORK_ID } from '../../util/constants.js'
+import Portis from '@portis/web3';
 
 const monitorWeb3 = function (state) {
   let networkId = state && state.web3 ? state.web3.networkId : ''
@@ -14,7 +15,9 @@ const monitorWeb3 = function (state) {
     web3 = new Web3(web3.currentProvider)
   } else {
     console.log('monitorWeb3: No web3 in browser')
-    web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
+    const portis = new Portis('65f17f53-fe42-4c18-95a1-500242c3a467', 'mainnet');
+    web3 = new Web3(portis.provider);
+    // web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
     isLocalWeb3 = true
   }
 
