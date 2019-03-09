@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.2;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
@@ -8,9 +8,11 @@ contract FundingToken is ContinuousToken {
     using SafeMath for uint256;
 
     uint256 public timeframe;
-    uint256 public totalFunds;
-    uint constant public winnerListSize = 2;
-    uint256 constant public contractFee = 5;
+    uint256 public totalVotes;
+    uint constant public winnerListSize = 3;
+    uint256[winnerListSize] public rankingPrizePerThousand;
+    uint256 constant public contractFeePerThousand = 5;
+    
 
     event Voting(
         address _from,
@@ -38,7 +40,8 @@ contract FundingToken is ContinuousToken {
     
     constructor(uint256 _reserveRatio, uint256 _timeframe) ContinuousToken(_reserveRatio) public {
         timeframe = _timeframe;
-        totalFunds = 0;
+        totalVotes = 0;
+        rankingPrizePerThousand = [uint256(550), uint256(300), uint256(150)];//should be initialized from a function using winnerListSize and a decreasing multiplier
     }
 
     function isProject(address addr) 
@@ -108,7 +111,7 @@ contract FundingToken is ContinuousToken {
         require(amount > 0, "Must spend tokens to vote.");
         //transfer amount to smart contract
         transfer(owner(), amount);
-        totalFunds += amount;
+        totalVotes += amount;
         projects[addr].votes += amount;
         //update winnerList
         updateWinnerList(addr);
@@ -118,7 +121,8 @@ contract FundingToken is ContinuousToken {
 
     function newProject (uint256 min, uint256 max, uint field) 
     //can create or fund a project only when not distributing
-        external returns(bool res)  
+        external 
+        returns(bool res)  
     {
         require(msg.sender != owner(), "Contract owner cannot create a new project");
         //check the user didn't submit another project already. We are gonna extend this to allow for multiple projects per user/account (maybe)
@@ -151,21 +155,58 @@ contract FundingToken is ContinuousToken {
         public onlyOwner 
         returns(bool res) 
     {
-        uint256 prize = calculatePrize();
-        uint wIndex = findMostVotedIndex();
-        address wAddr = winnerList[wIndex];
-        //make sure ties get the same prize
+
+        require (winnerList.length == winnerListSize);
+        
+        //make sure ties get the same prize. Right now is time ordered (not even sure)
 
         for (uint i=0; i<winnerList.length; i++) {
-            Project memory p = projects[winnerList[i]];
-            p.votes = 0;
+            //popWinner, it returns the most voted project address and removes it from the winnerList
+            address wAddress = popWinner();
+            Project memory p = projects[wAddress];
+            uint256 wPrize = calculatePrize(i, p.votes);
+            transfer(wAddress, wPrize);
+            // p.votes = 0;
         }
         winnerList.length = 0;
-        transfer(wAddr, prize);
-        totalFunds = 0;
+        resetVotes();
+        totalVotes = 0;
         
         return true;
     }
+
+    function resetVotes() 
+        internal
+        returns(bool res)  
+    {
+        //reset votes to 0
+        for (uint i=0; i<projectList.length; i++) {
+            //popWinner, it returns the most voted project and removes it from the winnerList
+            Project memory p = projects[projectList[i]];
+            p.votes = 0;
+        }
+
+        return true;
+    }
+    
+
+    function popWinner () 
+        internal
+        returns(address wAddress)  
+    {
+        uint wIndex = findMostVotedIndex();
+        address wAddr = winnerList[wIndex];
+        //remove winner from winnerList
+        if(wIndex != winnerList.length - 1) {
+            //copy last project to wIndex
+            winnerList[wIndex] = winnerList[winnerList.length - 1];
+        }
+        //remove last project
+        winnerList.length--;
+        return wAddr;
+        
+    }
+    
 
     function updateWinnerList(address addr) 
         internal 
@@ -228,11 +269,23 @@ contract FundingToken is ContinuousToken {
         return _index;
     }
     
-    function calculatePrize () 
+    function calculateTotalPrize () 
         view internal
         returns(uint256 prize) 
     {
-        return totalFunds * (100 - contractFee) / 100;
+        return totalVotes * (1000 - contractFeePerThousand) / 1000;
+    }
+
+    function calculatePrize (uint prizeIndex, uint256 votes) 
+        view internal
+        returns(uint256 prize) 
+    {
+        uint256 totalPrize = calculateTotalPrize();
+        uint256 rankingPrize = totalPrize * rankingPrizePerThousand[prizeIndex] /1000;
+        uint256 propPrize = votes/ totalVotes;
+
+        //this are all rounded down numbers, in this case it is fine (we are not gonna spend all of the totalVotes).
+        return (rankingPrize + propPrize) / 2;
     }
     
     
