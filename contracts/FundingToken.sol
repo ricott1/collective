@@ -11,7 +11,7 @@ contract FundingToken is ContinuousToken {
     uint256 public totalFunds;
     uint constant public winnerListSize = 3;
     uint256[winnerListSize] public rankingPrizePerThousand;
-    uint256 constant public contractFeePerThousand = 5;
+    uint256 constant public contractFeePerThousand = 1;
     
 
     event Voting(
@@ -43,6 +43,15 @@ contract FundingToken is ContinuousToken {
         totalFunds = 0;
         rankingPrizePerThousand = [uint256(550), uint256(300), uint256(150)];//should be initialized from a function using winnerListSize and a decreasing multiplier
     }
+
+    function burnExtraFunds (uint256 _amount) 
+        internal onlyOwner 
+        returns(bool res)
+    {
+        burn(_amount)
+        return true;
+    }
+    
 
     function isProject(address addr) 
         public 
@@ -159,17 +168,19 @@ contract FundingToken is ContinuousToken {
         require (winnerList.length == winnerListSize);
         
         //make sure ties get the same prize. Right now is time ordered (not even sure)
-
+        uint256 extraFunds = totalFunds;
         for (uint i=0; i<winnerList.length; i++) {
             //popWinner, it returns the most voted project address and removes it from the winnerList
             address wAddress = popWinner();
             Project memory p = projects[wAddress];
             uint256 wPrize = calculatePrize(i, p.funds);
             transfer(wAddress, wPrize);
+            extraFunds -= wPrize;
         }
         winnerList.length = 0;
 
         resetVotes();
+        burnExtraFunds(extraFunds);
         totalFunds = 0;
         
         return true;
@@ -280,14 +291,24 @@ contract FundingToken is ContinuousToken {
         return totalFunds * (1000 - contractFeePerThousand) / 1000;
     }
 
-    function calculatePrize (uint prizeIndex, uint256 funds) 
+    function calculateTotalWinnerFunds () 
         view internal
         returns(uint256 prize) 
     {
-        uint256 totalPrize = calculateTotalPrize();
-        uint256 rankingPrize = totalPrize * rankingPrizePerThousand[prizeIndex] /1000;
-        uint256 propPrize = funds/ totalFunds;
+        return totalFunds * (1000 - contractFeePerThousand) / 1000;
+    }
 
+    function calculatePrize (uint prizeIndex, uint256 funds) 
+        view public
+        returns(uint256 prize) 
+    {
+        
+        require (funds <= totalFunds, "Funds are more than the total funds pool");
+        
+        uint256 rankingPrize = totalFunds * rankingPrizePerThousand[prizeIndex] /1000;
+        uint256 calculateTotalWinnerFunds = 0;
+        uint256 propPrize = funds/ totalWinnerFunds;
+        uint256 totalPrize = calculateTotalPrize();
         //this are all rounded down numbers, in this case it is fine (we are not gonna spend all of the totalFunds).
         return (rankingPrize + propPrize) / 2;
     }
