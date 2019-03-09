@@ -9,7 +9,7 @@ contract FundingToken is ContinuousToken {
 
     uint256 public timeframe;
     uint256 public totalFunds;
-    uint constant public winnerListSize = 3;
+    uint public winnerListSize = 3;
     uint256 constant public contractFeePerThousand = 1;
     uint256 constant public subscriptionModifierUpdateTime = 6;   
 
@@ -39,6 +39,7 @@ contract FundingToken is ContinuousToken {
 
     mapping (address => Project) public projects;
     mapping (address => uint) public subscriptions;
+    mapping (address => uint256) public lastSubscriptionTime;
     mapping (address => address[]) public fundedProjects;
     address[] public projectList;
     address[] public winnerList;
@@ -51,7 +52,12 @@ contract FundingToken is ContinuousToken {
     
     function mintFor(address _beneficiary) public payable validGasPrice {
         require(msg.value > 0, "Must send ether to buy tokens.");
-        subscriptions[_beneficiary] += 1;
+        if (now - lastSubscriptionTime[_beneficiary] > 2 * timeframe) {
+            subscriptions[_beneficiary] = 1;
+        } else if (now - lastSubscriptionTime[_beneficiary] >= timeframe){
+            subscriptions[_beneficiary] += 1;
+        }
+        
         uint256 _subscriptionModifier = getSubscriptionModifier(subscriptions[_beneficiary]);
         _continuousMint(msg.value * _subscriptionModifier/100, _beneficiary);
     }
@@ -176,6 +182,7 @@ contract FundingToken is ContinuousToken {
         returns(bool res)  
     {
         require(msg.sender != owner(), "Contract owner cannot create a new project");
+        require (min > 0, "Minimum funding cannot be 0.");
         //check the user didn't submit another project already. We are gonna extend this to allow for multiple projects per user/account (maybe)
         require(!isProject(msg.sender), "Applicant already sent a project, delete it before submitting a new one");
         Project memory _newProject = Project({funds:0, minFunding:min, field:field, time:now, pointer:0});
