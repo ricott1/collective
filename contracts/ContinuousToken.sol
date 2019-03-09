@@ -1,4 +1,4 @@
-pragma solidity 0.4.25;
+pragma solidity ^0.5.0;
 
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
@@ -7,12 +7,24 @@ import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./BancorBondingCurve.sol";
 import "./CappedGasPrice.sol";
 
-contract ContinuousToken is BancorBondingCurve, Ownable, ERC20 {
+contract ContinuousToken is BancorBondingCurve, Ownable, ERC20, CappedGasPrice {
     using SafeMath for uint256;
 
     uint256 public scale = 10**18;
     uint256 public reserveBalance = 10*scale;
     uint256 public reserveRatio;
+
+    event ContinuousMint(
+        address _from,
+        uint256  _amount,
+        uint256 _deposit
+    );
+
+    event ContinuousBurn(
+        address _from,
+        uint256  _amount,
+        uint256 _reimbursement
+    );
 
     constructor(
         uint256 _reserveRatio
@@ -21,17 +33,17 @@ contract ContinuousToken is BancorBondingCurve, Ownable, ERC20 {
         _mint(msg.sender, 1*scale);
     }
 
-    function mint() public payable {
+    function mint() public payable validGasPrice {
         require(msg.value > 0, "Must send ether to buy tokens.");
         _continuousMint(msg.value);
     }
 
-    function burn(uint256 _amount) public {
+    function burn(uint256 _amount) public validGasPrice {
         uint256 returnAmount = _continuousBurn(_amount);
         msg.sender.transfer(returnAmount);
     }
 
-    function () public payable { mint(); }
+    function () external payable  { mint(); }
 
     function calculateContinuousMintReturn(uint256 _amount)
         public view returns (uint256 mintAmount)
@@ -63,7 +75,7 @@ contract ContinuousToken is BancorBondingCurve, Ownable, ERC20 {
         require(_amount > 0, "Amount must be non-zero.");
         require(balanceOf(msg.sender) >= _amount, "Insufficient tokens to burn.");
 
-        uint256 reimburseAmount = calculateontinuousdBurnReturn(_amount);
+        uint256 reimburseAmount = calculateContinuousBurnReturn(_amount);
         reserveBalance = reserveBalance.sub(reimburseAmount);
         _burn(msg.sender, _amount);
         emit ContinuousBurn(msg.sender, _amount, reimburseAmount);

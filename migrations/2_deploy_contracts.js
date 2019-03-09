@@ -1,9 +1,11 @@
-const SimpleStorage = artifacts.require("SimpleStorage");
-const TutorialToken = artifacts.require("TutorialToken");
-const ComplexStorage = artifacts.require("ComplexStorage");
+const Power = artifacts.require("Power");
+const BancorBondingCurve = artifacts.require("BancorBondingCurve");
+const CappedGasPrice = artifacts.require("CappedGasPrice");
+const ContinuousToken = artifacts.require("ContinuousToken");
 
 module.exports = function(deployer) {
-  deployer.deploy(SimpleStorage);
-  deployer.deploy(TutorialToken);
-  deployer.deploy(ComplexStorage);
+  deployer.deploy(Power);
+  deployer.deploy(BancorBondingCurve);
+  deployer.deploy(CappedGasPrice);
+  deployer.deploy(ContinuousToken, 500000);
 };
