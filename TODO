@@ -1,0 +1,1 @@
+in fundingToken.sol update winners list dynamically, meaning that everytime somebody gets voten we check if they enter the winning list
