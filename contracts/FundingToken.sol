@@ -9,6 +9,8 @@ contract FundingToken is ContinuousToken {
 
     uint256 public timeframe;
     uint256 public totalFunds;
+    uint constant public winnerListSize = 2;
+    uint256 constant public contractFee = 5;
 
     event Voting(
         address _from,
@@ -31,6 +33,7 @@ contract FundingToken is ContinuousToken {
 
     mapping (address => Project) public projects;
     address[] public projectList;
+    address[] public winnerList;
 
     
     constructor(uint256 _reserveRatio, uint256 _timeframe) ContinuousToken(_reserveRatio) public {
@@ -107,6 +110,8 @@ contract FundingToken is ContinuousToken {
         transfer(owner(), amount);
         totalFunds += amount;
         projects[addr].votes += amount;
+        //update winnerList
+        updateWinnerList(addr);
         emit Voting(msg.sender, addr, amount);
         return true;
     }
@@ -125,7 +130,10 @@ contract FundingToken is ContinuousToken {
         return true;
     }
 
-    function getProjectCount() public view returns(uint count) {
+    function getProjectCount() 
+        public view 
+        returns(uint count) 
+    {
         return projectList.length;
     }
 
@@ -139,31 +147,94 @@ contract FundingToken is ContinuousToken {
         return true;
     }
 
-    function distributeFunds () public onlyOwner returns(bool res) {
-        uint256 prize = totalFunds;
-        address winner = getMostVoted();
+    function distributeFunds () 
+        public onlyOwner 
+        returns(bool res) 
+    {
+        uint256 prize = calculatePrize();
+        uint wIndex = findMostVotedIndex();
+        address wAddr = winnerList[wIndex];
         //make sure ties get the same prize
-        projects[winner].votes = 0;
-        transfer(winner, prize);
+
+        for (uint i=0; i<winnerList.length; i++) {
+            Project memory p = projects[winnerList[i]];
+            p.votes = 0;
+        }
+        winnerList.length = 0;
+        transfer(wAddr, prize);
         totalFunds = 0;
+        
         return true;
     }
 
-    function getMostVoted() internal view returns(address) {
-        uint256 largest = 0; 
-        uint256 i;
-        address winner;
-
-        for(i = 0; i < projectList.length; i++){
-            uint256 total = getProjectVotesByIndex(i);
-            if(total > largest) {
-                largest = total; 
-                winner = projectList[i];
-            } 
+    function updateWinnerList(address addr) 
+        internal 
+        returns(bool res)
+    {
+        Project memory p = projects[addr];
+        if (winnerList.length < winnerListSize) {
+            winnerList.push(addr);
+        } else {
+            uint index = findLeastVotedIndex();
+            if(projects[winnerList[index]].votes < p.votes) {
+                winnerList[index] = addr;
+            }     
         }
 
-        return winner;
+        return true;
     }
+
+    function findLeastVotedIndex () 
+        internal view
+        returns(uint index)  
+    {
+        require (winnerList.length > 0);
+        require (projectList.length >= winnerList.length);
+        
+        uint _index = 0;
+        Project memory p = projects[winnerList[_index]];
+        uint256 smallest = p.votes;
+
+        for (uint i=winnerList.length - 1; i>=0; i--) {
+            p = projects[winnerList[i]];
+            if(p.votes < smallest) {
+                _index = i;
+                smallest = p.votes;
+            }
+        }
+
+        return _index;
+    }
+
+    function findMostVotedIndex () 
+        internal view
+        returns(uint index)  
+    {
+        require (winnerList.length > 0);
+        require (projectList.length >= winnerList.length);
+        
+        uint _index = 0;
+        Project memory p = projects[winnerList[_index]];
+        uint256 largest = p.votes;
+
+        for (uint i=winnerList.length - 1; i>=0; i--) {
+            p = projects[winnerList[i]];
+            if(p.votes > largest) {
+                _index = i;
+                largest = p.votes;
+            }
+        }
+
+        return _index;
+    }
+    
+    function calculatePrize () 
+        view internal
+        returns(uint256 prize) 
+    {
+        return totalFunds * (100 - contractFee) / 100;
+    }
+    
     
 
 
