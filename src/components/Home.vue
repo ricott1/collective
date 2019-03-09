@@ -154,39 +154,6 @@ export default {
         console.log(contractInstance)
       })
     }
-
-    // if (this.$store.state.web3) {
-    //   blockchainManager.querySmartContract({
-    //     contractToUse: DB,
-    //     smartContractMethod: 'getObjectData',
-    //     state,
-    //     smartContractResolve: result => {
-    //       const userData = getObjectFromResponse(state, result, 1, userObject.keys || userManager.userKeys(), userObject.recordFieldTypes || userManager.userRecordFieldTypes())[0]
-    //       userData.coinbase = userData.coinbase || userId
-    //       return userData
-    //     },
-    //     smartContractReject: (error) => ({
-    //       error,
-    //       isValid: true,
-    //       warningMessage: "We've encountered a problem fetching your information from the blockchain. Please do try again in a few minutes."
-    //     })
-    //   })
-    // }
-
-    // this.$root.callToAccessBlockchain({
-    //   requestParams: {},
-    //   contractIndexToUse: 'UserAuthManager',
-    //   methodName: 'login',
-    //   managerIndex: 'UserManager',
-    //   callback: (isUserExists = false) => {
-    //     if (isUserExists) {
-    //       this.$root.logUserIn()
-    //     } else {
-    //       this.isAfterMount = true
-    //       this.setAvatar()
-    //     }
-    //   }
-    // })
   }
 }
 
