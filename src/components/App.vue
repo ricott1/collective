@@ -10,8 +10,13 @@
           </div>
         </router-link>
         <router-link to="/projects">
-          <div class=" p-1" :class="{ activated: path == '/projects'}">
+          <div class="mb-3 p-1" :class="{ activated: path == '/projects'}">
             <img src="@/assets/menu.svg" width="100%" alt="">
+          </div>
+        </router-link>
+        <router-link :to="{ name: 'Add' }">
+          <div class=" p-1" :class="{ activated: path == '/new-project'}">
+            <img src="@/assets/add.svg" width="100%" alt="">
           </div>
         </router-link>
       </div>
@@ -70,26 +75,63 @@ export default {
 </script>
 
 <style>
-.activated {
-  background: rgba(255,255,255,0.2);
-  border-radius: 4px;
-}
-.nav-menu {
-  flex: 1;
-}
-.text-clear {
-  color: rgb(164, 164, 164);
-}
-.left-bar {
-  background: rgb(33,107,246);
-  width: 64px;
-  align-self: stretch;
-  color: white;
-  position: fixed;
-  left: 0;
-  top: 0;
-  bottom: 0;
-}
+  .activated {
+    background: rgba(255,255,255,0.2);
+    border-radius: 4px;
+  }
+  .nav-menu {
+    flex: 1;
+  }
+  .text-clear {
+    color: rgb(164, 164, 164);
+  }
+  .left-bar {
+    background: rgb(33,107,246);
+    width: 64px;
+    align-self: stretch;
+    color: white;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+  }
+  .form-btn {
+    width: 226px;
+    background: rgb(33,107,246);
+    border: 0;
+    border-radius: 4px;
+    color: white;
+    padding: 12px;
+    font-weight: bold;
+    font-size: 0.95rem;
+  }
+  .grey.form-btn {
+    background: rgb(185, 185, 185);
+    color: rgb(134, 134, 134);
+  }
+    .tag {
+      background: rgba(255, 0, 0, 0.22);
+      color: red;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 4px;
+    }
+  .box {
+    background: white;
+    box-shadow: 1px 1px 30px rgba(0,0,0,0.05);
+    border-radius: 4px;
+  }
+  .category {
+    border-radius: 4px;
+    border: 1px solid rgb(230, 235, 237);
+    cursor: pointer;
+  }
+  .category:hover {
+    background-color: rgba(36, 161, 241, 0.07);
+  }
+  .category.active {
+    border-color: rgb(0, 102, 255) !important;
+  }
   html {
     background: rgb(248, 249, 251);
   }

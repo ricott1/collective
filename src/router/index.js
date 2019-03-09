@@ -5,6 +5,7 @@ import Dashboard from '@/components/Dashboard'
 import Profile from '@/components/sections/Profile.vue'
 import ProfileForm from '@/components/sections/ProfileForm.vue'
 import Web3Message from '@/components/sections/Web3Message.vue'
+import Add from '@/components/Add'
 
 Vue.use(Router)
 
@@ -23,6 +24,12 @@ export default new Router({
       name: 'Home',
       component: Home,
       meta: { view: Web3Message }
+    },
+    {
+      path: '/new-project',
+      name: 'Add',
+      component: Add,
+      // meta: { view: Web3Message }
     },
     {
       mode: 'history',
