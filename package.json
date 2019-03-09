@@ -140,6 +140,9 @@
   "bugs": {
     "url": "https://github.com/DOkwufulueze/eth-vue/issues"
   },
-  "homepage": "https://github.com/DOkwufulueze/eth-vue",
-  "readme": "https://github.com/DOkwufulueze/eth-vue/blob/master/README.md"
+  "homepage": "https://github.com/truffle-box/drizzle-box#readme",
+  "dependencies": {
+    "openzeppelin-solidity": "^2.1.1",
+    "truffle": "^5.0.7"
+  }
 }
