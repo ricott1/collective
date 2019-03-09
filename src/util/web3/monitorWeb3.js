@@ -15,8 +15,8 @@ const monitorWeb3 = function (state) {
     web3 = new Web3(web3.currentProvider)
   } else {
     console.log('monitorWeb3: No web3 in browser')
-    const portis = new Portis('65f17f53-fe42-4c18-95a1-500242c3a467', 'mainnet');
-    web3 = new Web3(portis.provider);
+    // const portis = new Portis('65f17f53-fe42-4c18-95a1-500242c3a467', 'mainnet');
+    // web3 = new Web3(portis.provider);
     // web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
     isLocalWeb3 = true
   }

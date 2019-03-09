@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="290px" height="290px" viewBox="0 0 290 290" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.1 (72631) - https://sketchapp.com -->
+    <title>menu</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="menu" fill="#FFFFFF" fill-rule="nonzero">
+            <rect id="Rectangle" x="0" y="220" width="70" height="70"></rect>
+            <rect id="Rectangle" x="0" y="110" width="70" height="70"></rect>
+            <rect id="Rectangle" x="0" y="0" width="70" height="70"></rect>
+            <rect id="Rectangle" x="110" y="220" width="70" height="70"></rect>
+            <rect id="Rectangle" x="110" y="110" width="70" height="70"></rect>
+            <rect id="Rectangle" x="110" y="0" width="70" height="70"></rect>
+            <rect id="Rectangle" x="220" y="220" width="70" height="70"></rect>
+            <rect id="Rectangle" x="220" y="110" width="70" height="70"></rect>
+            <rect id="Rectangle" x="220" y="0" width="70" height="70"></rect>
+        </g>
+    </g>
+</svg>

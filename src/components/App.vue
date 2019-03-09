@@ -1,6 +1,24 @@
 <template>
-  <div id="app">
+  <div id="app" class="d-flex">
+    <div class="left-bar d-flex flex-column align-items-center p-3">
+      <img src="@/assets/logo.svg" width="100%" alt="">
+
+      <div class="nav-menu d-flex flex-column align-items-center justify-content-center">
+        <router-link to="/">
+          <div class="mb-3 p-1" :class="{ activated: path == '/'}">
+            <img src="@/assets/home.svg" width="100%" alt="">
+          </div>
+        </router-link>
+        <router-link to="/projects">
+          <div class=" p-1" :class="{ activated: path == '/projects'}">
+            <img src="@/assets/menu.svg" width="100%" alt="">
+          </div>
+        </router-link>
+      </div>
+    </div>
+
     <router-view
+      class="router-view"
       :is-d-app-ready="isDAppReady"
       :current-view="currentView"
       :is-valid-user-but="isValidUserBut"
@@ -13,12 +31,13 @@
 <script>
 import Portis from '@portis/web3';
 import Web3 from 'web3';
-
-const portis = new Portis('65f17f53-fe42-4c18-95a1-500242c3a467', 'mainnet');
-const web3 = new Web3(portis.provider);
+import { mapState } from "vuex";
 
 export default {
   name: 'App',
+  computed: {
+    ...mapState({path: state => state.currentRoute.path})
+  },
   props: {
     isDAppReady: {
       type: Boolean,
@@ -31,6 +50,11 @@ export default {
     isValidUserBut: {
       type: String,
       default: '0'
+    }
+  },
+  created() {
+    if (!this.$store.state.user.hasWeb3InjectedBrowser) {
+      // por_portis-container
     }
   },
   methods: {
@@ -46,13 +70,30 @@ export default {
 </script>
 
 <style>
+.activated {
+  background: rgba(255,255,255,0.2);
+  border-radius: 4px;
+}
+.nav-menu {
+  flex: 1;
+}
+.text-clear {
+  color: rgb(164, 164, 164);
+}
+.left-bar {
+  background: rgb(33,107,246);
+  width: 64px;
+  align-self: stretch;
+  color: white;
+}
   html {
-    background: #eef0ef;
+    background: rgb(248, 249, 251);
   }
 
   body {
     margin: 0;
     width: 100%;
+    background: none !important;
   }
 
   * {
@@ -72,5 +113,9 @@ export default {
     /*max-width: 960px;*/
     min-width: 1020px;
     margin: auto;
+    min-height: 100vh;
+  }
+  .router-view {
+    flex: 1;
   }
 </style>

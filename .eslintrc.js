@@ -10,7 +10,7 @@ module.exports = {
     browser: true,
   },
   // https://github.com/standard/standard/blob/master/docs/RULES-en.md
-  extends: [ 'plugin:vue/recommended'],
+  extends: [ 'plugin:vue/base'],
   // required to lint *.vue files
   plugins: [
     'vue'

@@ -7,7 +7,6 @@
     <BodyTemplate
       :current-view="currentView"
     />
-    <FooterTemplate />
   </div>
 </template>
 
