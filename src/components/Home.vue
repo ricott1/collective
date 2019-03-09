@@ -10,41 +10,6 @@
     <p>Status: Funded / Closing in 5 hours</p>
     <p>My actual share</p>
 
-    <div class="box p-5 m-4">
-      <h1 class="text-center">Fund my project</h1>
-      <p class="text-center text-clear font-weight-500">First, lets select a category</p>
-      <div class="d-flex align-items-center justify-content-center p-5">
-        <div v-for="(category, i) in categories" width="226px" class="category d-flex flex-column align-items-center px-5 pt-5 pb-3 mx-3" :class="{active: i === selectedCategory}" @click="selectCategory(i)">
-          <img :src="category.image" alt="" width="80px">
-          <h4 class="text-center mt-4">{{ category.title }}</h4>
-          <p class="text-center mt-4">Funding closes in <br/></p>
-          <vac :end-time="category.endDate">
-            <p
-              class="text-center"
-              slot="process"
-              slot-scope="{ timeObj }">{{ `${ timeObj.d }days, ${timeObj.m}:${timeObj.s}` }}</p>
-            <p slot="finish">Ended !</p>
-          </vac>
-        </div>
-      </div>
-
-      <div class="d-flex justify-content-center">
-        <button class="form-btn">NEXT</button>
-      </div>
-
-      <div class="">
-        <input type="text" v-model="newForm.title">
-        <input type="text" v-model="newForm.description">
-        <input type="text" v-model="newForm.image">
-      </div>
-
-      <div class="d-flex justify-content-center">
-        <button class="form-btn grey mr-4">BACK</button>
-        <button class="form-btn">NEXT</button>
-      </div>
-    </div>
-
-
     <div class="projects-container pb-4 pl-4 pt-4 m-4 d-flex flex-column align-items-stretch">
       <div v-for="subject in categories" class="mb-4">
         <div class="d-flex align-items-baseline">
@@ -87,53 +52,19 @@ const cameraImage = require('@/assets/video-camera.svg')
 
 import contract from 'truffle-contract'
 import ContinuousToken from '../../build/contracts/ContinuousToken.json'
+import { mapState } from "vuex"
 
 export default {
   name: 'Home',
+  computed: {
+    ...mapState({
+      categories: state => state.categories
+    })
+  },
   components: {
     HeaderTemplate,
     BodyTemplate,
     FooterTemplate
-  },
-  data() {
-    return {
-      selectedCategory: 1,
-      newForm: {
-        title: null,
-        description: null,
-        image: null
-      },
-      categories: [
-        {
-          id: 0,
-          title: 'Music',
-          image: musicImage,
-          endDate: new Date().getTime() + 60000,
-          projects: [
-            {
-              title: 'ok',
-              logoImage: 'https://99designs-start-attachments.imgix.net/alchemy-pictures/2016%2F02%2F22%2F04%2F24%2F31%2Fb7bd820a-ecc0-4170-8f4e-3db2e73b0f4a%2F550250_artsigma.png?auto=format&ch=Width%2CDPR&w=250&h=250',
-              backgroundImage: 'ok',
-              externalLink: 'https://dedefeef.com',
-              description: 'Loliliol fwe wefnwef wkenf;wei nw;goi ne fwe f',
-              progress: 56
-            }
-          ]
-        },
-        {
-          id: 1,
-          title: 'Start-up',
-          image: startUpImage,
-          projects: []
-        },
-        {
-          id: 2,
-          title: 'Films',
-          image: cameraImage,
-          projects: []
-        }
-      ],
-    }
   },
   props: {
     currentView: {
@@ -165,34 +96,8 @@ import FooterTemplate from './layout/FooterTemplate'
 </script>
 
 <style scoped>
-.form-btn {
-  width: 226px;
-  background: rgb(33,107,246);
-  border: 0;
-  border-radius: 4px;
-  color: white;
-  padding: 12px;
-  font-weight: bold;
-  font-size: 0.95rem;
-}
-.grey.form-btn {
-  background: rgb(185, 185, 185);
-  color: rgb(134, 134, 134);
-}
-  .tag {
-    background: rgba(255, 0, 0, 0.22);
-    color: red;
-    font-weight: 500;
-    padding: 3px 10px;
-    border-radius: 4px;
-  }
   #home {
     width: 100%;
-  }
-  .box {
-    background: white;
-    box-shadow: 1px 1px 30px rgba(0,0,0,0.05);
-    border-radius: 4px;
   }
   h4 {
     font-size: 1.1rem;
@@ -213,17 +118,6 @@ import FooterTemplate from './layout/FooterTemplate'
   .project__image {
     object-fit: cover;
     border-radius: 4px;
-  }
-  .category {
-    border-radius: 4px;
-    border: 1px solid rgb(230, 235, 237);
-    cursor: pointer;
-  }
-  .category:hover {
-    background-color: rgba(36, 161, 241, 0.07);
-  }
-  .category.active {
-    border-color: rgb(0, 102, 255) !important;
   }
   .no-project {
     background: rgb(243, 246, 250);

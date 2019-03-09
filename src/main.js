@@ -14,7 +14,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import { mapState, mapActions } from 'vuex'
 import { ACTION_TYPES } from './util/constants'
-import UserManager from './js/UserManager'
+// import UserManager from './js/UserManager'
 import monitorWeb3 from './util/web3/monitorWeb3'
 
 Vue.config.devtools = true
@@ -30,7 +30,7 @@ new Vue({
   data: function () {
     return {
       managers: {
-        UserManager
+        // UserManager
       }
     }
   },
