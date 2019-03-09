@@ -10,16 +10,15 @@ contract FundingToken is ContinuousToken {
     uint256 public timeframe;
     uint256 public totalFunds;
     uint constant public winnerListSize = 3;
-    uint256[winnerListSize] public rankingPrizePerThousand;
     uint256 constant public contractFeePerThousand = 1;
     
 
-    event Voting(
+    event Funding(
         address _from,
         address  _to,
         uint256 _amount
     );
-
+     
     event NewProject(
         address  _addr
     );
@@ -40,6 +39,7 @@ contract FundingToken is ContinuousToken {
 
     mapping (address => Project) public projects;
     mapping (address => uint) public subscriptions;
+    mapping (address => address[]) public fundedProjects;
     address[] public projectList;
     address[] public winnerList;
 
@@ -47,8 +47,8 @@ contract FundingToken is ContinuousToken {
     constructor(uint256 _reserveRatio, uint256 _timeframe) ContinuousToken(_reserveRatio) public {
         timeframe = _timeframe;
         totalFunds = 0;
-        rankingPrizePerThousand = [uint256(550), uint256(300), uint256(150)];//should be initialized from a function using winnerListSize and a decreasing multiplier
     }
+    
 
     function burnExtraFunds (uint256 _amount) 
         internal onlyOwner 
@@ -90,7 +90,16 @@ contract FundingToken is ContinuousToken {
         return (p.funds, p.minFunding, p.field, p.time);
     }
 
-    function getProjectVotesByAddress(address addr)
+    function getFundedProjectAddressByIndex(address funder, uint index)
+        public
+        view
+        returns(address addr)
+    {
+        require (index >= 0 && index < getFundedProjectCount(funder), "Invalid index");
+        return fundedProjects[funder][index];
+    }
+
+    function getProjectFundsByAddress(address addr)
         public
         view
         returns(uint256 funds)
@@ -99,7 +108,7 @@ contract FundingToken is ContinuousToken {
         return p.funds;
     }
 
-    function getProjectVotesByIndex(uint index)
+    function getProjectFundsByIndex(uint index)
         public
         view
         returns(uint256 funds)
@@ -120,7 +129,7 @@ contract FundingToken is ContinuousToken {
     }
 
 
-    function voteByAddress (address addr, uint256 amount) 
+    function fundByAddress (address addr, uint256 amount) 
         external returns(bool res)  
     {
         require(amount > 0, "Must spend tokens to vote.");
@@ -130,7 +139,8 @@ contract FundingToken is ContinuousToken {
         projects[addr].funds += amount;
         //update winnerList
         updateWinnerList(addr);
-        emit Voting(msg.sender, addr, amount);
+        fundedProjects[msg.sender].push(addr);
+        emit Funding(msg.sender, addr, amount);
         return true;
     }
 
@@ -154,6 +164,13 @@ contract FundingToken is ContinuousToken {
         returns(uint count) 
     {
         return projectList.length;
+    }
+
+    function getFundedProjectCount(address funder) 
+        public view 
+        returns(uint count) 
+    {
+        return fundedProjects[funder].length;
     }
 
     function deleteProjectByAddress(address addr) public onlyOwner returns(bool success) {
@@ -307,10 +324,21 @@ contract FundingToken is ContinuousToken {
         require (prizeIndex >= 0 && prizeIndex < winnerListSize, "Prize not present");
         
         uint256 propPrizePerThousand = 1000 * funds/ totalFunds;
-        uint256 prizeModPerThousand = rankingPrizePerThousand[prizeIndex] + propPrizePerThousand;
+        uint256 prizeModPerThousand = getRankingPrizePerThousand(prizeIndex, winnerList.length) + propPrizePerThousand;
         uint256 _prize = calculateModifiedTotalPrize() * prizeModPerThousand/1000/2;//the 2 is because we assign half funds proportionally and half based on ranking.
         //this are all rounded down numbers, in this case it is fine (we are not gonna spend all of the totalFunds).
 
         return _prize;
     }          
+
+
+    //returns rangking prizes modifier dividing them as (total # of prizes - prizeIndex)**2/normalization
+    function getRankingPrizePerThousand (uint prizeIndex, uint n) 
+        internal pure
+        returns(uint256 rp) 
+    {
+        uint256 norm = n * (2*n**2 + 3*n + 1) / 6;
+        return 1000*(n - prizeIndex)**2/norm;
+    }
+    
 }
