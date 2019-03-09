@@ -24,6 +24,12 @@ contract FundingToken is ContinuousToken {
         address  _addr
     );
 
+    event FundDistributed(
+        address addr, 
+        uint256 fund
+    );
+    
+
     struct Project {
         uint256 funds; 
         uint256 minFunding;
@@ -176,6 +182,7 @@ contract FundingToken is ContinuousToken {
             uint256 wPrize = calculatePrize(i, p.funds);
             transfer(wAddress, wPrize);
             extraFunds -= wPrize;
+            emit FundDistributed(wAddress, wPrize);
         }
         winnerList.length = 0;
 
@@ -284,14 +291,7 @@ contract FundingToken is ContinuousToken {
         return _index;
     }
     
-    function calculateTotalPrize () 
-        view internal
-        returns(uint256 prize) 
-    {
-        return totalFunds * (1000 - contractFeePerThousand) / 1000;
-    }
-
-    function calculateTotalWinnerFunds () 
+    function calculateModifiedTotalPrize () 
         view internal
         returns(uint256 prize) 
     {
@@ -304,17 +304,13 @@ contract FundingToken is ContinuousToken {
     {
         
         require (funds <= totalFunds, "Funds are more than the total funds pool");
+        require (prizeIndex >= 0 && prizeIndex < winnerListSize, "Prize not present");
         
-        uint256 rankingPrize = totalFunds * rankingPrizePerThousand[prizeIndex] /1000;
-        uint256 calculateTotalWinnerFunds = 0;
-        uint256 propPrize = funds/ totalWinnerFunds;
-        uint256 totalPrize = calculateTotalPrize();
+        uint256 propPrizePerThousand = 1000 * funds/ totalFunds;
+        uint256 prizeModPerThousand = rankingPrizePerThousand[prizeIndex] + propPrizePerThousand;
+        uint256 _prize = calculateModifiedTotalPrize() * prizeModPerThousand/1000/2;//the 2 is because we assign half funds proportionally and half based on ranking.
         //this are all rounded down numbers, in this case it is fine (we are not gonna spend all of the totalFunds).
-        return (rankingPrize + propPrize) / 2;
-    }
-    
-    
 
-
-          
+        return _prize;
+    }          
 }
