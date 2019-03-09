@@ -86,7 +86,7 @@ const startUpImage = require('@/assets/start-up.svg')
 const cameraImage = require('@/assets/video-camera.svg')
 
 import contract from 'truffle-contract'
-import DB from '../../build/contracts/DB.json'
+import ContinuousToken from '../../build/contracts/ContinuousToken.json'
 
 export default {
   name: 'Home',
@@ -148,10 +148,12 @@ export default {
   },
   mounted() {
     if (this.$store.state.web3.instance) {
-      const DBContract = contract(DB)
-      DBContract.setProvider(this.$store.state.web3.instance().currentProvider)
-      DBContract.deployed().then(contractInstance => {
+      const Contract = contract(ContinuousToken)
+      Contract.setProvider(this.$store.state.web3.instance().currentProvider)
+      Contract.deployed().then(contractInstance => {
         console.log(contractInstance)
+      }).catch(err => {
+        console.log(err)
       })
     }
   }
