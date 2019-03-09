@@ -3,7 +3,7 @@ var Web3 = require("web3");
 // PrivateKeyProvider uses your private key sign the smart contract deployment transaction
 let PrivateKeyProvider = require("truffle-privatekey-provider");
 let privateKey = "[YOUR_PRIVATE_KEY]";
-
+console.log("truffle-config.js");
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
   // to customize your Truffle configuration!

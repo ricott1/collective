@@ -9,7 +9,7 @@ contract FundingToken is ContinuousToken {
 
     uint256 public timeframe;
     uint256 public totalFunds;
-    uint constant public winnerListSize = 3;
+    uint public winnerListSize = 3;
     uint256 constant public contractFeePerThousand = 1;
     uint256 constant public subscriptionModifierUpdateTime = 6;   
 
@@ -176,6 +176,7 @@ contract FundingToken is ContinuousToken {
         returns(bool res)  
     {
         require(msg.sender != owner(), "Contract owner cannot create a new project");
+        require (min > 0, "Minimum funding cannot be 0.");
         //check the user didn't submit another project already. We are gonna extend this to allow for multiple projects per user/account (maybe)
         require(!isProject(msg.sender), "Applicant already sent a project, delete it before submitting a new one");
         Project memory _newProject = Project({funds:0, minFunding:min, field:field, time:now, pointer:0});
