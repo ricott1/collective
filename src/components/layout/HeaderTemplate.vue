@@ -1,16 +1,27 @@
 <template>
   <div class="top-bar d-flex align-items-center px-4">
     <h3>Projects</h3>
+    <div v-if="web3.coinbase" class="">
+      <div>My account</div>
+      <div>{{ web3.coinbase }}</div>
+    </div>
   </div>
 </template>
 
 <script type="text/javascript">
+import { mapState } from "vuex"
+
 export default {
   name: 'HeaderTemplate',
   data: function () {
     return {
       user: this.$store.state.user
     }
+  },
+  computed: {
+    ...mapState({
+      web3: state => state.web3
+    })
   },
   methods: {
     logUserIn (evt = null) {
@@ -20,7 +31,8 @@ export default {
     logUserOut (evt = null) {
       if (evt) evt.target.disabled = true
       this.$emit('log-user-out', evt)
-    }
+    },
+
   }
 }
 </script>

@@ -37,6 +37,11 @@
         <input type="text" v-model="newForm.description">
         <input type="text" v-model="newForm.image">
       </div>
+
+      <div class="d-flex justify-content-center">
+        <button class="form-btn grey mr-4">BACK</button>
+        <button class="form-btn">NEXT</button>
+      </div>
     </div>
 
 
@@ -155,6 +160,10 @@ import FooterTemplate from './layout/FooterTemplate'
   padding: 12px;
   font-weight: bold;
   font-size: 0.95rem;
+}
+.grey.form-btn {
+  background: rgb(185, 185, 185);
+  color: rgb(134, 134, 134);
 }
   .tag {
     background: rgba(255, 0, 0, 0.22);
