@@ -10,8 +10,13 @@
           </div>
         </router-link>
         <router-link to="/projects">
-          <div class=" p-1" :class="{ activated: path == '/projects'}">
+          <div class="mb-3 p-1" :class="{ activated: path == '/projects'}">
             <img src="@/assets/menu.svg" width="100%" alt="">
+          </div>
+        </router-link>
+        <router-link :to="{ name: 'Add' }">
+          <div class=" p-1" :class="{ activated: path == '/new-project'}">
+            <img src="@/assets/add.svg" width="100%" alt="">
           </div>
         </router-link>
       </div>
@@ -19,6 +24,7 @@
 
     <router-view
       class="router-view"
+      :key="$route.fullPath"
       :is-d-app-ready="isDAppReady"
       :current-view="currentView"
       :is-valid-user-but="isValidUserBut"
@@ -79,6 +85,25 @@ export default {
 }
 .text-clear {
   color: rgb(164, 164, 164);
+}
+.box {
+  background: white;
+  box-shadow: 1px 1px 30px rgba(0,0,0,0.05);
+  border-radius: 4px;
+}
+.form-btn {
+  width: 226px;
+  background: rgb(33,107,246);
+  border: 0;
+  border-radius: 4px;
+  color: white;
+  padding: 12px;
+  font-weight: bold;
+  font-size: 0.95rem;
+}
+.grey.form-btn {
+  background: rgb(235, 233, 233);
+  color: rgb(153, 153, 162);
 }
 .left-bar {
   background: rgb(33,107,246);
