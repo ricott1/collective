@@ -9,9 +9,9 @@ contract FundingToken is ContinuousToken {
 
     uint256 public timeframe;
     uint256 public totalFunds;
-    uint constant public winnerListSize = 3;
+    uint public winnerListSize = 3;
     uint256 constant public contractFeePerThousand = 1;
-    
+    uint256 constant public subscriptionModifierUpdateTime = 6;   
 
     event Funding(
         address _from,
@@ -39,6 +39,7 @@ contract FundingToken is ContinuousToken {
 
     mapping (address => Project) public projects;
     mapping (address => uint) public subscriptions;
+    mapping (address => uint256) public lastSubscriptionTime;
     mapping (address => address[]) public fundedProjects;
     address[] public projectList;
     address[] public winnerList;
@@ -49,7 +50,38 @@ contract FundingToken is ContinuousToken {
         totalFunds = 0;
     }
     
+    function mintFor(address _beneficiary) public payable validGasPrice {
+        require(msg.value > 0, "Must send ether to buy tokens.");
+        if (now - lastSubscriptionTime[_beneficiary] > 2 * timeframe) {
+            subscriptions[_beneficiary] = 1;
+        } else if (now - lastSubscriptionTime[_beneficiary] >= timeframe){
+            subscriptions[_beneficiary] += 1;
+        }
+        
+        uint256 _subscriptionModifier = getSubscriptionModifier(subscriptions[_beneficiary]);
+        _continuousMint(msg.value * _subscriptionModifier/100, _beneficiary);
+    }
+    
 
+    function getSubscriptionModifier(uint _subscriptionPeriod) 
+        internal pure 
+        returns(uint256 mod)
+    {
+         if (_subscriptionPeriod >= 5* subscriptionModifierUpdateTime) {
+            return 15 * subscriptionModifierUpdateTime;
+         }  else if (_subscriptionPeriod >= 4* subscriptionModifierUpdateTime) {
+            return 10 * subscriptionModifierUpdateTime + uint256(_subscriptionPeriod);
+         } else if (_subscriptionPeriod >= 3* subscriptionModifierUpdateTime) {
+            return 6 * subscriptionModifierUpdateTime + 2*uint256(_subscriptionPeriod);
+         } else if (_subscriptionPeriod >= 2* subscriptionModifierUpdateTime) {
+            return 3 * subscriptionModifierUpdateTime + 3*uint256(_subscriptionPeriod) ;
+         } else if (_subscriptionPeriod >= subscriptionModifierUpdateTime) {
+            return subscriptionModifierUpdateTime + 4 * uint256(_subscriptionPeriod) ;
+         } else {
+            return 5 * uint256(_subscriptionPeriod);
+         } 
+    }
+    
     function burnExtraFunds (uint256 _amount) 
         internal onlyOwner 
         returns(bool res)
@@ -150,6 +182,7 @@ contract FundingToken is ContinuousToken {
         returns(bool res)  
     {
         require(msg.sender != owner(), "Contract owner cannot create a new project");
+        require (min > 0, "Minimum funding cannot be 0.");
         //check the user didn't submit another project already. We are gonna extend this to allow for multiple projects per user/account (maybe)
         require(!isProject(msg.sender), "Applicant already sent a project, delete it before submitting a new one");
         Project memory _newProject = Project({funds:0, minFunding:min, field:field, time:now, pointer:0});

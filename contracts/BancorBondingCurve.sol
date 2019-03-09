@@ -12,7 +12,7 @@ import "./Power.sol"; // Efficient power function.
 */
 contract BancorBondingCurve is Power {
    using SafeMath for uint256;
-   uint32 private constant MAX_RESERVE_RATIO = 1000000;
+   uint32 private constant MAX_RESERVE_RATIO = 100000000;
 
    /**
    * @dev given a continuous token supply, reserve token balance, reserve ratio, and a deposit amount (in the reserve token),

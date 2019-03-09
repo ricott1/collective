@@ -9,7 +9,6 @@ import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
 import "./FundingToken.sol";
 
-
 contract Subscription {
     using ECDSA for bytes32;
     using SafeMath for uint256;
@@ -25,7 +24,8 @@ contract Subscription {
     uint256 public requiredTokenAmount;
     uint256 public requiredPeriodSeconds;
     uint256 public requiredGasPrice;
-    address public requiredContractAddress;
+
+    FundingToken fundingToken;
 
 
     // similar to a nonce that avoids replay attacks this allows a single execution
@@ -59,13 +59,12 @@ contract Subscription {
     );
 
     constructor(
-        address _toAddress,
+        address payable _toAddress,
         address _tokenAddress,
         uint256 _tokenAmount,
         uint256 _periodSeconds,
         uint256 _gasPrice,
-        uint8 _version,
-        address _contractAddress
+        uint8 _version
     ) public {
         requiredToAddress=_toAddress;
         requiredTokenAddress=_tokenAddress;
@@ -74,7 +73,7 @@ contract Subscription {
         requiredGasPrice=_gasPrice;
         author=msg.sender;
         contractVersion=_version;
-        requiredContractAddress=_contractAddress;
+        fundingToken=FundingToken(_toAddress);
     }
 
     // this is used by external smart contracts to verify on-chain that a
@@ -192,6 +191,7 @@ contract Subscription {
         bytes memory signature //proof the subscriber signed the meta trasaction
     )
         public
+        payable
         returns (bool success)
     {
         bytes32 subscriptionHash = getSubscriptionHash(
@@ -201,20 +201,17 @@ contract Subscription {
         // make sure the subscription is valid and ready
         require( isSubscriptionReady(from, to, tokenAddress, tokenAmount, periodSeconds, gasPrice, nonce, signature), "Subscription is not ready or conditions of transction are not met" );
 
-        //increment the timestamp by the period so it wont be valid until then
+        // increment the timestamp by the period so it wont be valid until then
         nextValidTimestamp[subscriptionHash] = block.timestamp.add(periodSeconds);
-
-        //check to see if this nonce is larger than the current count and we'll set that for this 'from'
-        if(nonce > extraNonce[from]){
-          extraNonce[from] = nonce;
-        }
 
         // now, let make the transfer from the subscriber to the publisher
         uint256 startingBalance = ERC20(tokenAddress).balanceOf(to);
 
-          
-
+        //
+        fundingToken.mintFor.value(tokenAmount)(from);
+        //
         ERC20(tokenAddress).transferFrom(from,to,tokenAmount);
+
         require(
           (startingBalance+tokenAmount) == ERC20(tokenAddress).balanceOf(to),
           "ERC20 Balance did not change correctly"
