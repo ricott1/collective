@@ -13,12 +13,12 @@ contract FundingToken is ContinuousToken {
     uint256 constant public contractFeePerThousand = 1;
     
 
-    event Voting(
+    event Funding(
         address _from,
         address  _to,
         uint256 _amount
     );
-
+     
     event NewProject(
         address  _addr
     );
@@ -39,6 +39,7 @@ contract FundingToken is ContinuousToken {
 
     mapping (address => Project) public projects;
     mapping (address => uint) public subscriptions;
+    mapping (address => address[]) public fundedProjects;
     address[] public projectList;
     address[] public winnerList;
 
@@ -89,7 +90,16 @@ contract FundingToken is ContinuousToken {
         return (p.funds, p.minFunding, p.field, p.time);
     }
 
-    function getProjectVotesByAddress(address addr)
+    function getFundedProjectAddressByIndex(address funder, uint index)
+        public
+        view
+        returns(address addr)
+    {
+        require (index >= 0 && index < getFundedProjectCount(funder), "Invalid index");
+        return fundedProjects[funder][index];
+    }
+
+    function getProjectFundsByAddress(address addr)
         public
         view
         returns(uint256 funds)
@@ -98,7 +108,7 @@ contract FundingToken is ContinuousToken {
         return p.funds;
     }
 
-    function getProjectVotesByIndex(uint index)
+    function getProjectFundsByIndex(uint index)
         public
         view
         returns(uint256 funds)
@@ -119,7 +129,7 @@ contract FundingToken is ContinuousToken {
     }
 
 
-    function voteByAddress (address addr, uint256 amount) 
+    function fundByAddress (address addr, uint256 amount) 
         external returns(bool res)  
     {
         require(amount > 0, "Must spend tokens to vote.");
@@ -129,7 +139,8 @@ contract FundingToken is ContinuousToken {
         projects[addr].funds += amount;
         //update winnerList
         updateWinnerList(addr);
-        emit Voting(msg.sender, addr, amount);
+        fundedProjects[msg.sender].push(addr);
+        emit Funding(msg.sender, addr, amount);
         return true;
     }
 
@@ -153,6 +164,13 @@ contract FundingToken is ContinuousToken {
         returns(uint count) 
     {
         return projectList.length;
+    }
+
+    function getFundedProjectCount(address funder) 
+        public view 
+        returns(uint count) 
+    {
+        return fundedProjects[funder].length;
     }
 
     function deleteProjectByAddress(address addr) public onlyOwner returns(bool success) {

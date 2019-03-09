@@ -7,7 +7,7 @@ import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
-import "./ContinuousToken.sol";
+import "./FundingToken.sol";
 
 
 contract Subscription {
@@ -211,6 +211,9 @@ contract Subscription {
 
         // now, let make the transfer from the subscriber to the publisher
         uint256 startingBalance = ERC20(tokenAddress).balanceOf(to);
+
+          
+
         ERC20(tokenAddress).transferFrom(from,to,tokenAmount);
         require(
           (startingBalance+tokenAmount) == ERC20(tokenAddress).balanceOf(to),
