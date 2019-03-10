@@ -9,21 +9,23 @@
       <h2 class="mb-4">Dashboard</h2>
 
       <h4 class="mb-4">My funded projects</h4>
-      <div v-for="project in projects" :key="project" class="project p-4">
-        <img :src="project.logoImage || 'https://99designs-start-attachments.imgix.net/alchemy-pictures/2016%2F02%2F22%2F04%2F24%2F31%2Fb7bd820a-ecc0-4170-8f4e-3db2e73b0f4a%2F550250_artsigma.png?auto=format&ch=Width%2CDPR&w=250&h=250'" alt="" width="50px" height="50px" class="project__image">
-        <h5 class="mt-3 font-weight-bold mb-0">{{ project.title || 'Amazing project' }}</h5>
-        <p class="text-clear">{{project.externalLink || 'https://mywebsite.com' }}</p>
-        <p>{{ project.description || 'An amazing description'}}</p>
+      <div class="d-flex">
+        <div v-for="project in projects" :key="project" class="project p-4 mr-4" >
+          <img :src="project.logoImage || 'https://99designs-start-attachments.imgix.net/alchemy-pictures/2016%2F02%2F22%2F04%2F24%2F31%2Fb7bd820a-ecc0-4170-8f4e-3db2e73b0f4a%2F550250_artsigma.png?auto=format&ch=Width%2CDPR&w=250&h=250'" alt="" width="50px" height="50px" class="project__image">
+          <h5 class="mt-3 font-weight-bold mb-0">{{ project.title || 'Amazing project' }}</h5>
+          <p class="text-clear">{{project.externalLink || 'https://mywebsite.com' }}</p>
+          <p>{{ project.description || 'An amazing description'}}</p>
 
-        <div class="d-flex justify-content-between">
-          <div class="tag">{{ Math.round(project.funds / project.min * 100) }}% to minimum</div>
+          <div class="d-flex justify-content-between">
+            <div class="tag">{{ Math.round(project.funds / project.min * 100) }}% to minimum</div>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="box p-4 m-4">
       <h4 class="mb-3">Join the economy</h4>
-      <p>Balance: {{ tokensAmount / 1000000000000000 }} CVT</p>
+      <p>Balance: {{ tokensAmount / 100000000000000000 }} CVT</p>
 
       <div class="d-flex pr-5 justify-content-between align-items-center home-buying">
         <div class="">
