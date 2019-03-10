@@ -32,7 +32,7 @@
           <p>{{ project.description || 'An amazing description'}}</p>
 
           <div class="d-flex justify-content-between align-items-center">
-            <div class="tag">{{ Math.round(project.funds / project.min * 100) }}% to minimum</div>
+            <div class="tag">{{project.funds - project.min < 0 ? Math.round(project.funds / project.min * 100) : 100}}% funded</div>
 
             <button type="button" name="button" class="form-btn" @click="fundProject(project)">Invest {{ buyAmount }} CVT</button>
           </div>
