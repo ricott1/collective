@@ -1,5 +1,6 @@
 {
   "contractName": "TestToken",
+  "address": "0x07821ba84862e098850ddc7d9013a75726dc8aa3",
   "abi": [
     {
       "constant": true,

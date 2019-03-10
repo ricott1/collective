@@ -1,5 +1,6 @@
 {
   "contractName": "Subscription",
+  "address": "0x542d183889f59764fe705ab97fa5a6f65528b1b8",
   "abi": [
     {
       "constant": true,

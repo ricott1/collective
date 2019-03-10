@@ -1,5 +1,6 @@
 {
   "contractName": "FundingToken",
+  "address": "0x834b650de6eb74ad2f9e7cec495a748cfe6f718f",
   "abi": [
     {
       "constant": true,
