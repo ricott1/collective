@@ -17,7 +17,7 @@
           <p>{{ project.description || 'An amazing description'}}</p>
 
           <div class="d-flex justify-content-between">
-            <div class="tag">{{ project.funds - project.min < 0 ? Math.round(project.funds / project.min * 100) : 100 }}% funded</div>
+            <div class="tag">{{ Math.round(project.funds / project.min * 100) }}% funded</div>
           </div>
         </div>
       </div>
@@ -35,7 +35,7 @@
         </div>
         <h2>OR</h2>
         <div class="">
-          <h4>Buy tokens</h4>
+          <h4>Convert Ether</h4>
           <input class="mb-4" type="text" name="" v-model="buyAmountInput"><br/>
           <button type="button" name="button" class="form-btn" @click="buy">Buy</button>
         </div>
@@ -51,6 +51,7 @@ const cameraImage = require('@/assets/video-camera.svg')
 
 import contract from 'truffle-contract'
 import ContinuousToken from '../../build/contracts/ContinuousToken.json'
+import TestToken from '../../build/contracts/TestToken.json'
 import FundingToken from '../../build/contracts/FundingToken.json'
 import Subscription from '../../build/contracts/Subscription.json'
 import { mapState } from 'vuex'
@@ -106,7 +107,7 @@ export default {
     getUserTokens() {
       if (this.$store.state.web3.instance) {
         const web3 = this.$store.state.web3.instance()
-        const fundingContract = new web3.eth.Contract(FundingToken.abi, "0x958733cd16f2efda8444dec02e8fde6e345c0580")
+        const fundingContract = new web3.eth.Contract(FundingToken.abi, FundingToken.address)
 
         web3.eth.getAccounts().then(accounts => {
           console.log(accounts);
@@ -119,7 +120,7 @@ export default {
     buy() {
       if (this.$store.state.web3.instance) {
         const web3 = this.$store.state.web3.instance()
-        const fundingContract = new web3.eth.Contract(FundingToken.abi, "0x958733cd16f2efda8444dec02e8fde6e345c0580")
+        const fundingContract = new web3.eth.Contract(FundingToken.abi, FundingToken.address)
 
         web3.eth.getAccounts().then(accounts => {
           fundingContract.methods.mint().send({ from: accounts[0], value: 1000000000000000000 * this.buyAmountInput }).then(ok => {
@@ -132,20 +133,20 @@ export default {
       // this.subscribeAmountInput
       if (this.$store.state.web3.instance) {
         const web3 = this.$store.state.web3.instance()
-        const subscriptionContract = new web3.eth.Contract(Subscription.abi, "0x0ee8135332bf95db52b6c19b05566fcd766844cd")
+        const subscriptionContract = new web3.eth.Contract(Subscription.abi, Subscription.address)
 
         web3.eth.getAccounts().then(accounts => {
-          let parts = [accounts[0], "0x958733cd16f2efda8444dec02e8fde6e345c0580", "0xea7fc784893eb723417946f2e4c52f5359941b0d", this.subscribeAmountInput, '120', '0', '0'];
+          let parts = [accounts[0], FundingToken.address, TestToken.address, this.subscribeAmountInput, '120', '0', '0'];
           subscriptionContract.methods.getSubscriptionHash(...parts).call().then(hash => {
             // Sign
             web3.eth.personal.sign(hash, accounts[0]).then(signature => {
               const data = {
                 fromAddress: accounts[0],
-                toAddress: "0x958733cd16f2efda8444dec02e8fde6e345c0580",
-                tokenAddress: "0xea7fc784893eb723417946f2e4c52f5359941b0d",
+                toAddress: FundingToken.address,
+                tokenAddress: TestToken.address,
                 tokenAmount: this.subscribeAmountInput,
                 subscriptionHash: hash,
-                contractAddress: "0x958733cd16f2efda8444dec02e8fde6e345c0580",
+                contractAddress: FundingToken.address,
                 signature
               }
               axios.post("http://localhost:9999/subscription", data).then(ret => {
@@ -159,7 +160,7 @@ export default {
     getFundedProjects() {
       if (this.$store.state.web3.instance) {
         const web3 = this.$store.state.web3.instance()
-        const fundingContract = new web3.eth.Contract(FundingToken.abi, "0x958733cd16f2efda8444dec02e8fde6e345c0580")
+        const fundingContract = new web3.eth.Contract(FundingToken.abi, FundingToken.address)
 
         web3.eth.getAccounts().then(accounts => {
           fundingContract.methods.getFundedProjectCount(accounts[0]).call().then(count => {

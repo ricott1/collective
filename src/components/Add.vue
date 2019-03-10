@@ -73,9 +73,9 @@ export default {
     addProject() {
       if (this.$store.state.web3.instance) {
         const web3 = this.$store.state.web3.instance()
-        const fundingContract = new web3.eth.Contract(FundingToken.abi, "0x958733cd16f2efda8444dec02e8fde6e345c0580")
+        const fundingContract = new web3.eth.Contract(FundingToken.abi, FundingToken.address)
         web3.eth.getAccounts().then(accounts => {
-          fundingContract.methods.newProject(this.newForm.minAmount, this.selectedCategory).send({ from: accounts[0] }).then(ret => {
+          fundingContract.methods.newProject(this.newForm.minAmount * 100000000000000, this.selectedCategory).send({ from: accounts[0] }).then(ret => {
             this.$toasted.show('Sent', {type: 'success', position: 'bottom-center'})
           }).catch(err => {
             console.log(err);

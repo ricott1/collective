@@ -85,13 +85,15 @@ export default {
     fundProject(project) {
       if (this.$store.state.web3.instance) {
         const web3 = this.$store.state.web3.instance()
-        const fundingContract = new web3.eth.Contract(FundingToken.abi, "0x958733cd16f2efda8444dec02e8fde6e345c0580")
+        const fundingContract = new web3.eth.Contract(FundingToken.abi, FundingToken.address)
 
         web3.eth.getAccounts().then(accounts => {
-          fundingContract.methods.projectList(project.i).call().then(project => {
+          fundingContract.methods.projectList(project.i).call().then(address => {
+            console.log(address);
             console.log(this.buyAmount);
-            fundingContract.methods.fundByAddress(project, this.buyAmount * 100000000000000).send({ from: accounts[0] }).then(ret => {
+            fundingContract.methods.fundByAddress(address, this.buyAmount * 100000000000000).send({ from: accounts[0] }).then(ret => {
               this.$toasted.show('Sent', {type: 'success', position: 'bottom-center'})
+              this.getProjects()
             }).catch(err => {
               console.log(err);
               this.$toasted.show('Error', {type: 'error', position: 'bottom-center'})
@@ -103,7 +105,7 @@ export default {
     getProjects() {
       if (this.$store.state.web3.instance) {
         const web3 = this.$store.state.web3.instance()
-        const fundingContract = new web3.eth.Contract(FundingToken.abi, "0x958733cd16f2efda8444dec02e8fde6e345c0580")
+        const fundingContract = new web3.eth.Contract(FundingToken.abi, FundingToken.address)
 
         fundingContract.methods.getProjectCount().call().then(count => {
           this.projects = []
