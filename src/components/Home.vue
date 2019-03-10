@@ -17,7 +17,7 @@
           <p>{{ project.description || 'An amazing description'}}</p>
 
           <div class="d-flex justify-content-between">
-            <div class="tag">{{ Math.round(project.funds / project.min * 100) }}% funded</div>
+            <div class="tag" :class="{ 'activated': Number(project.funds) > Number(project.min) }">{{ Math.round(project.funds / project.min * 100) }}% funded</div>
           </div>
         </div>
       </div>

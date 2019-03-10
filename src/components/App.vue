@@ -116,6 +116,10 @@ export default {
       padding: 3px 10px;
       border-radius: 4px;
     }
+    .tag.activated {
+      background: rgba(18, 214, 67, 0.22);
+      color: green;
+    }
   .box {
     background: white;
     box-shadow: 1px 1px 30px rgba(0,0,0,0.05);
