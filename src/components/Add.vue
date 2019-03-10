@@ -20,10 +20,6 @@
         </div>
       </div>
 
-      <div class="d-flex justify-content-center">
-        <button class="form-btn">NEXT</button>
-      </div>
-
       <div class="form--one-line d-flex align-items-center flex-column m-5">
         <input type="text" v-model="newForm.title" placeholder="Title">
         <input type="text" v-model="newForm.description" placeholder="Description">
@@ -32,7 +28,6 @@
       </div>
 
       <div class="d-flex justify-content-center">
-        <button class="form-btn grey mr-4">BACK</button>
         <button class="form-btn" @click="addProject">NEXT</button>
       </div>
     </div>

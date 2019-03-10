@@ -1,21 +1,9 @@
 import Web3 from 'web3'
-import Portis from '@portis/web3';
 
 let getWeb3 = new Promise(function (resolve, reject) {
   // Wait for loading completion to avoid race conditions with web3 injection timing.
   window.addEventListener('load', function () {
     var web3 = window.web3
-
-    if (!web3) {
-      const myLocalPOANode = {
-        nodeUrl: 'http://localhost:8545',
-        chainId: 5777,
-        nodeProtocol: 'rpc',
-      };
-
-      const portis = new Portis('65f17f53-fe42-4c18-95a1-500242c3a467', myLocalPOANode); //'mainnet'
-      web3 = new Web3(portis.provider);
-    }
 
     // Checking if Web3 has been injected by the browser (Mist/MetaMask)
     if (typeof web3 !== 'undefined') {

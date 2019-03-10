@@ -76,8 +76,25 @@ export default {
     }
   },
   methods: {
-    selectCategory(i) {
-      this.selectedCategory = i;
+    fundProject(project) {
+      console.log(project)
+      // projectList[index]
+
+      if (this.$store.state.web3.instance) {
+        const web3 = this.$store.state.web3.instance()
+        const Contract = contract(FundingToken)
+
+        Contract.setProvider(this.$store.state.web3.instance().currentProvider)
+        Contract.deployed().then(contractInstance => {
+          web3.eth.getAccounts((error, accounts) => {
+            console.log(contractInstance);
+            const projectAddress = contractInstance.projectList[index]
+            fundByAddress(projectAddress)
+          });
+        }).catch(err => {
+          console.log(err)
+        })
+      }
     },
     getProjects() {
       if (this.$store.state.web3.instance) {
@@ -92,7 +109,10 @@ export default {
                 console.log(i);
                 contractInstance.getProjectByIndex(i).then(ret => {
                   console.log(ret);
-                  this.projects.push(ret)
+                  this.projects.push({
+                    ...ret,
+                    i
+                  })
                   // TODO Push project id
                 }).catch(err => console.log(err))
               }
