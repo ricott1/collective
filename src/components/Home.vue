@@ -19,13 +19,13 @@
 
       <h3>My funded projects</h3>
       <div v-for="project in projects" :key="project" class="project p-4">
-        <img :src="project.logoImage" alt="" width="50px" height="50px" class="project__image" />
-        <h5 class="mt-3 font-weight-bold mb-0">{{ project.title }}</h5>
-        <p class="text-clear">{{ project.externalLink }}</p>
-        <p>{{ project.description }}</p>
+        <img :src="project.logoImage || 'https://99designs-start-attachments.imgix.net/alchemy-pictures/2016%2F02%2F22%2F04%2F24%2F31%2Fb7bd820a-ecc0-4170-8f4e-3db2e73b0f4a%2F550250_artsigma.png?auto=format&ch=Width%2CDPR&w=250&h=250'" alt="" width="50px" height="50px" class="project__image">
+        <h5 class="mt-3 font-weight-bold mb-0">{{ project.title || 'Amazing project' }}</h5>
+        <p class="text-clear">{{project.externalLink || 'https://mywebsite.com' }}</p>
+        <p>{{ project.description || 'An amazing description'}}</p>
 
         <div class="d-flex justify-content-between">
-          <div class="tag">{{ project.progress }}% to minimum</div>
+          <div class="tag">{{ Math.round(project.funds / project.min * 100) }}% to minimum</div>
         </div>
       </div>
     </div>
@@ -111,7 +111,7 @@ export default {
 
         web3.eth.getAccounts().then(accounts => {
           fundingContract.methods.mint().send({ from: accounts[0], value: 1000000000000000000 * this.buyAmountInput }).then(ok => {
-            window.reload()
+            this.loadState()
           })
         })
       }
@@ -152,8 +152,11 @@ export default {
         web3.eth.getAccounts().then(accounts => {
           fundingContract.methods.getFundedProjectCount(accounts[0]).call().then(count => {
             for (var i = 0; i < count; i++) {
-              fundingContract.methods.fundedProjects(accounts[0], i).call().then(project => {
-                this.projects.push(project)
+              fundingContract.methods.fundedProjects(accounts[0], i).call().then(address => {
+                fundingContract.methods.getProjectByAddress(address).call().then(project => {
+                  console.log(project);
+                  this.projects.push(project)
+                })
               })
             }
           })

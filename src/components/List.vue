@@ -6,6 +6,8 @@
       :current-view="currentView"
     /> -->
 
+    <input type="number" name="" v-model="buyAmount">
+
     <div class="projects-container pb-4 pl-4 pt-4 m-4 d-flex flex-column align-items-stretch"  style="overflow: hidden;">
       <div v-for="subject in categories" class="mb-4" style="overflow: hidden;">
         <div class="d-flex align-items-baseline">
@@ -26,9 +28,7 @@
           <p>{{ project.description || 'An amazing description'}}</p>
 
           <div class="d-flex justify-content-between">
-            <div class="tag">
-              {{ project.progress || 20 }}% to minimum
-            </div>
+            <div class="tag">{{ Math.round(project.funds / project.min * 100) }}% to minimum</div>
 
             <button type="button" name="button" @click="fundProject(project)">Fund</button>
           </div>
@@ -62,7 +62,8 @@ export default {
   },
   data () {
     return {
-      projects: []
+      projects: [],
+      buyAmount: 0
     }
   },
   components: {
@@ -78,36 +79,22 @@ export default {
   },
   methods: {
     fundProject(project) {
-      // if (this.$store.state.web3.instance) {
-      //   const web3 = this.$store.state.web3.instance()
-      //   const fundingContract = new web3.eth.Contract(FundingToken.abi, "0x958733cd16f2efda8444dec02e8fde6e345c0580")
-      //
-      //   web3.eth.getAccounts().then(accounts => {
-      //     fundingContract.methods.fundedProjects()
-      //     console.log(fundingContract)
-      //     // fundingContract.methods.getFundedProjectCount(accounts[0]).call().then(amount => {
-      //     //   this.tokensAmount = amount;
-      //     // })
-      //   })
-      // }
-      // console.log(project)
-      // // projectList[index]
-      //
-      // if (this.$store.state.web3.instance) {
-      //   const web3 = this.$store.state.web3.instance()
-      //   const Contract = contract(FundingToken)
-      //
-      //   Contract.setProvider(this.$store.state.web3.instance().currentProvider)
-      //   Contract.deployed().then(contractInstance => {
-      //     web3.eth.getAccounts((error, accounts) => {
-      //       console.log(contractInstance);
-      //       const projectAddress = contractInstance.projectList[index]
-      //       fundByAddress(projectAddress)
-      //     });
-      //   }).catch(err => {
-      //     console.log(err)
-      //   })
-      // }
+      if (this.$store.state.web3.instance) {
+        const web3 = this.$store.state.web3.instance()
+        const fundingContract = new web3.eth.Contract(FundingToken.abi, "0x958733cd16f2efda8444dec02e8fde6e345c0580")
+
+        web3.eth.getAccounts().then(accounts => {
+          fundingContract.methods.projectList(project.i).call().then(project => {
+            console.log(this.buyAmount);
+            fundingContract.methods.fundByAddress(project, this.buyAmount).send({ from: accounts[0] }).then(ret => {
+              this.$toasted.show('Sent', {type: 'success', position: 'bottom-center'})
+            }).catch(err => {
+              console.log(err);
+              this.$toasted.show('Error', {type: 'error', position: 'bottom-center'})
+            })
+          })
+        })
+      }
     },
     getProjects() {
       if (this.$store.state.web3.instance) {
@@ -116,8 +103,9 @@ export default {
 
         fundingContract.methods.getProjectCount().call().then(count => {
           for (var i = 0; i < count; i++) {
-            fundingContract.methods.getProjectByIndex(i).call().then(ret => {
-              this.projects.push({...ret, i })
+            let ii = i;
+            fundingContract.methods.getProjectByIndex(ii).call().then(ret => {
+              this.projects.push({...ret, i: ii })
             })
           }
         })
