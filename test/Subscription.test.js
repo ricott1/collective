@@ -111,7 +111,6 @@ contract('FundingToken subscription tests', async accounts => {
                         assert.isFalse(isActive, 'Subscription should not be active yet')
 
                         let ftBalance1 = await fundingTokenInstance.balanceOf(fromAddress)
-
                         let proxyBalance1 = await ttInstance.methods
                             .balanceOf(fundingTokenInstance.address)
                             .call()

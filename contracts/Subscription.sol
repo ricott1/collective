@@ -194,6 +194,7 @@ contract Subscription {
         payable
         returns (bool success)
     {
+        require(msg.value > 0, "Value must be greater than zero.");
         bytes32 subscriptionHash = getSubscriptionHash(
             from, to, tokenAddress, tokenAmount, periodSeconds, gasPrice, nonce
         );
@@ -209,7 +210,7 @@ contract Subscription {
 
         //
         fundingToken.mintFor.value(tokenAmount)(from);
-        //
+        
         ERC20(tokenAddress).transferFrom(from,to,tokenAmount);
 
         require(

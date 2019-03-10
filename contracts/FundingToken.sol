@@ -38,7 +38,7 @@ contract FundingToken is ContinuousToken {
     }
 
     mapping (address => Project) public projects;
-    mapping (address => uint) public subscriptions;
+    mapping (address => uint256) public subscriptions;
     mapping (address => uint256) public lastSubscriptionTime;
     mapping (address => address[]) public fundedProjects;
     address[] public projectList;
@@ -59,27 +59,27 @@ contract FundingToken is ContinuousToken {
         }
         lastSubscriptionTime[_beneficiary] = now;
 
-        uint256 _subscriptionModifier = getSubscriptionModifier(subscriptions[_beneficiary]);
+        uint256 _subscriptionModifier = subscriptions[_beneficiary]*4; //getSubscriptionModifier(subscriptions[_beneficiary]);
         _continuousMint(msg.value * _subscriptionModifier/100, _beneficiary);
     }
 
 
-    function getSubscriptionModifier(uint _subscriptionPeriod)
+    function getSubscriptionModifier(uint256 _subscriptionPeriod)
         internal pure
         returns(uint256 mod)
     {
          if (_subscriptionPeriod >= 5* subscriptionModifierUpdateTime) {
             return 15 * subscriptionModifierUpdateTime;
          }  else if (_subscriptionPeriod >= 4* subscriptionModifierUpdateTime) {
-            return 10 * subscriptionModifierUpdateTime + uint256(_subscriptionPeriod);
+            return 10 * subscriptionModifierUpdateTime + _subscriptionPeriod;
          } else if (_subscriptionPeriod >= 3* subscriptionModifierUpdateTime) {
-            return 6 * subscriptionModifierUpdateTime + 2*uint256(_subscriptionPeriod);
+            return 6 * subscriptionModifierUpdateTime + 2*_subscriptionPeriod;
          } else if (_subscriptionPeriod >= 2* subscriptionModifierUpdateTime) {
-            return 3 * subscriptionModifierUpdateTime + 3*uint256(_subscriptionPeriod) ;
+            return 3 * subscriptionModifierUpdateTime + 3*_subscriptionPeriod;
          } else if (_subscriptionPeriod >= subscriptionModifierUpdateTime) {
-            return subscriptionModifierUpdateTime + 4 * uint256(_subscriptionPeriod) ;
+            return subscriptionModifierUpdateTime + 4 * _subscriptionPeriod;
          } else {
-            return 5 * uint256(_subscriptionPeriod);
+            return 5 * _subscriptionPeriod;
          }
     }
 
