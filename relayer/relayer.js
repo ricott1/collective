@@ -135,7 +135,7 @@ const doSubscription = async subscription => {
 				value: subscription.tokenAmount,
 			}
 
-			console.log('Execute subscription', 268435455, txparams, parts)
+			console.log('Execute subscription', 268435455, txparams, parts, subscription.signature)
 
 			let receipt = await contract.methods
 				.executeSubscription(...parts, subscription.signature)

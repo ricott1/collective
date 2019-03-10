@@ -98,14 +98,14 @@
       "type": "function"
     }
   ],
-  "bytecode": "0x6080604052670de0b6b3a7640000600155336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16600073ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a3610444806100db6000396000f3fe608060405234801561001057600080fd5b506004361061007f576000357c0100000000000000000000000000000000000000000000000000000000900480633de39c1114610084578063715018a6146100a25780638da5cb5b146100ac5780638f32d59b146100f6578063d2fa635e14610118578063f2fde38b14610146575b600080fd5b61008c61018a565b6040518082815260200191505060405180910390f35b6100aa610190565b005b6100b4610262565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6100fe61028b565b604051808215151515815260200191505060405180910390f35b6101446004803603602081101561012e57600080fd5b81019080803590602001909291905050506102e2565b005b6101886004803603602081101561015c57600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506102ff565b005b60015481565b61019861028b565b15156101a357600080fd5b600073ffffffffffffffffffffffffffffffffffffffff166000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a360008060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905090565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614905090565b6102ea61028b565b15156102f557600080fd5b8060018190555050565b61030761028b565b151561031257600080fd5b61031b8161031e565b50565b600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff161415151561035a57600080fd5b8073ffffffffffffffffffffffffffffffffffffffff166000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a3806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055505056fea165627a7a72305820b01dd1b7ec0191dffad17b439b3835b46129a698514a96afc3872502d6eca1f50029",
-  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061007f576000357c0100000000000000000000000000000000000000000000000000000000900480633de39c1114610084578063715018a6146100a25780638da5cb5b146100ac5780638f32d59b146100f6578063d2fa635e14610118578063f2fde38b14610146575b600080fd5b61008c61018a565b6040518082815260200191505060405180910390f35b6100aa610190565b005b6100b4610262565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6100fe61028b565b604051808215151515815260200191505060405180910390f35b6101446004803603602081101561012e57600080fd5b81019080803590602001909291905050506102e2565b005b6101886004803603602081101561015c57600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506102ff565b005b60015481565b61019861028b565b15156101a357600080fd5b600073ffffffffffffffffffffffffffffffffffffffff166000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a360008060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905090565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614905090565b6102ea61028b565b15156102f557600080fd5b8060018190555050565b61030761028b565b151561031257600080fd5b61031b8161031e565b50565b600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff161415151561035a57600080fd5b8073ffffffffffffffffffffffffffffffffffffffff166000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a3806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055505056fea165627a7a72305820b01dd1b7ec0191dffad17b439b3835b46129a698514a96afc3872502d6eca1f50029",
+  "bytecode": "0x6080604052670de0b6b3a7640000600155336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16600073ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a3610444806100db6000396000f3fe608060405234801561001057600080fd5b506004361061007f576000357c0100000000000000000000000000000000000000000000000000000000900480633de39c1114610084578063715018a6146100a25780638da5cb5b146100ac5780638f32d59b146100f6578063d2fa635e14610118578063f2fde38b14610146575b600080fd5b61008c61018a565b6040518082815260200191505060405180910390f35b6100aa610190565b005b6100b4610262565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6100fe61028b565b604051808215151515815260200191505060405180910390f35b6101446004803603602081101561012e57600080fd5b81019080803590602001909291905050506102e2565b005b6101886004803603602081101561015c57600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506102ff565b005b60015481565b61019861028b565b15156101a357600080fd5b600073ffffffffffffffffffffffffffffffffffffffff166000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a360008060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905090565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614905090565b6102ea61028b565b15156102f557600080fd5b8060018190555050565b61030761028b565b151561031257600080fd5b61031b8161031e565b50565b600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff161415151561035a57600080fd5b8073ffffffffffffffffffffffffffffffffffffffff166000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a3806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055505056fea165627a7a7230582095e22ba5f2228dcf88a1468330a68ddef06d96f44f7b7d0731e67edb24b4a8e50029",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061007f576000357c0100000000000000000000000000000000000000000000000000000000900480633de39c1114610084578063715018a6146100a25780638da5cb5b146100ac5780638f32d59b146100f6578063d2fa635e14610118578063f2fde38b14610146575b600080fd5b61008c61018a565b6040518082815260200191505060405180910390f35b6100aa610190565b005b6100b4610262565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6100fe61028b565b604051808215151515815260200191505060405180910390f35b6101446004803603602081101561012e57600080fd5b81019080803590602001909291905050506102e2565b005b6101886004803603602081101561015c57600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506102ff565b005b60015481565b61019861028b565b15156101a357600080fd5b600073ffffffffffffffffffffffffffffffffffffffff166000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a360008060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905090565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614905090565b6102ea61028b565b15156102f557600080fd5b8060018190555050565b61030761028b565b151561031257600080fd5b61031b8161031e565b50565b600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff161415151561035a57600080fd5b8073ffffffffffffffffffffffffffffffffffffffff166000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a3806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055505056fea165627a7a7230582095e22ba5f2228dcf88a1468330a68ddef06d96f44f7b7d0731e67edb24b4a8e50029",
   "sourceMap": "90:359:1:-;;;160:10;131:39;;524:10:10;515:6;;:19;;;;;;;;;;;;;;;;;;582:6;;;;;;;;;;;549:40;;578:1;549:40;;;;;;;;;;;;90:359:1;;;;;;",
   "deployedSourceMap": "90:359:1:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;90:359:1;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;131:39;;;:::i;:::-;;;;;;;;;;;;;;;;;;;1347:137:10;;;:::i;:::-;;659:77;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;979:90;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;349:98:1;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;349:98:1;;;;;;;;;;;;;;;;;:::i;:::-;;1655:107:10;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;1655:107:10;;;;;;;;;;;;;;;;;;;:::i;:::-;;131:39:1;;;;:::o;1347:137:10:-;863:9;:7;:9::i;:::-;855:18;;;;;;;;1445:1;1408:40;;1429:6;;;;;;;;;;;1408:40;;;;;;;;;;;;1475:1;1458:6;;:19;;;;;;;;;;;;;;;;;;1347:137::o;659:77::-;697:7;723:6;;;;;;;;;;;716:13;;659:77;:::o;979:90::-;1019:4;1056:6;;;;;;;;;;;1042:20;;:10;:20;;;1035:27;;979:90;:::o;349:98:1:-;863:9:10;:7;:9::i;:::-;855:18;;;;;;;;432:8:1;418:11;:22;;;;349:98;:::o;1655:107:10:-;863:9;:7;:9::i;:::-;855:18;;;;;;;;1727:28;1746:8;1727:18;:28::i;:::-;1655:107;:::o;1906:183::-;1999:1;1979:22;;:8;:22;;;;1971:31;;;;;;;;2046:8;2017:38;;2038:6;;;;;;;;;;;2017:38;;;;;;;;;;;;2074:8;2065:6;;:17;;;;;;;;;;;;;;;;;;1906:183;:::o",
   "source": "pragma solidity ^0.5.2;\n\nimport \"openzeppelin-solidity/contracts/ownership/Ownable.sol\";\n\ncontract CappedGasPrice is Ownable {\n    uint256 public maxGasPrice = 1 * 10**18; // Adjustable value\n\n    modifier validGasPrice() {\n        require(tx.gasprice <= maxGasPrice, \"Transaction gas price cannot exceed maximum gas price.\");\n        _;\n    }\n\n    function setMaxGasPrice(uint256 gasPrice) public onlyOwner {\n        maxGasPrice = gasPrice;\n    }\n}",
-  "sourcePath": "/Users/jterrazz/Projects/ethParisFinal/ethparis/contracts/CappedGasPrice.sol",
+  "sourcePath": "/Users/michaelkaserer/Projects/Blockchain/ethparis/contracts/CappedGasPrice.sol",
   "ast": {
-    "absolutePath": "/Users/jterrazz/Projects/ethParisFinal/ethparis/contracts/CappedGasPrice.sol",
+    "absolutePath": "/Users/michaelkaserer/Projects/Blockchain/ethparis/contracts/CappedGasPrice.sol",
     "exportedSymbols": {
       "CappedGasPrice": [
         245
@@ -131,7 +131,7 @@
         "id": 211,
         "nodeType": "ImportDirective",
         "scope": 246,
-        "sourceUnit": 4772,
+        "sourceUnit": 4766,
         "src": "25:63:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -145,10 +145,10 @@
               "id": 212,
               "name": "Ownable",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 4771,
+              "referencedDeclaration": 4765,
               "src": "117:7:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Ownable_$4771",
+                "typeIdentifier": "t_contract$_Ownable_$4765",
                 "typeString": "contract Ownable"
               }
             },
@@ -158,7 +158,7 @@
           }
         ],
         "contractDependencies": [
-          4771
+          4765
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -166,7 +166,7 @@
         "id": 245,
         "linearizedBaseContracts": [
           245,
-          4771
+          4765
         ],
         "name": "CappedGasPrice",
         "nodeType": "ContractDefinition",
@@ -317,7 +317,7 @@
                             "name": "tx",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 5299,
+                            "referencedDeclaration": 5293,
                             "src": "240:2:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_transaction",
@@ -393,10 +393,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5290,
-                        5291
+                        5284,
+                        5285
                       ],
-                      "referencedDeclaration": 5291,
+                      "referencedDeclaration": 5285,
                       "src": "232:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -509,7 +509,7 @@
                   "name": "onlyOwner",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 4705,
+                  "referencedDeclaration": 4699,
                   "src": "398:9:1",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
@@ -575,7 +575,7 @@
     "src": "0:449:1"
   },
   "legacyAST": {
-    "absolutePath": "/Users/jterrazz/Projects/ethParisFinal/ethparis/contracts/CappedGasPrice.sol",
+    "absolutePath": "/Users/michaelkaserer/Projects/Blockchain/ethparis/contracts/CappedGasPrice.sol",
     "exportedSymbols": {
       "CappedGasPrice": [
         245
@@ -601,7 +601,7 @@
         "id": 211,
         "nodeType": "ImportDirective",
         "scope": 246,
-        "sourceUnit": 4772,
+        "sourceUnit": 4766,
         "src": "25:63:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -615,10 +615,10 @@
               "id": 212,
               "name": "Ownable",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 4771,
+              "referencedDeclaration": 4765,
               "src": "117:7:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Ownable_$4771",
+                "typeIdentifier": "t_contract$_Ownable_$4765",
                 "typeString": "contract Ownable"
               }
             },
@@ -628,7 +628,7 @@
           }
         ],
         "contractDependencies": [
-          4771
+          4765
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -636,7 +636,7 @@
         "id": 245,
         "linearizedBaseContracts": [
           245,
-          4771
+          4765
         ],
         "name": "CappedGasPrice",
         "nodeType": "ContractDefinition",
@@ -787,7 +787,7 @@
                             "name": "tx",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 5299,
+                            "referencedDeclaration": 5293,
                             "src": "240:2:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_transaction",
@@ -863,10 +863,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        5290,
-                        5291
+                        5284,
+                        5285
                       ],
-                      "referencedDeclaration": 5291,
+                      "referencedDeclaration": 5285,
                       "src": "232:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -979,7 +979,7 @@
                   "name": "onlyOwner",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 4705,
+                  "referencedDeclaration": 4699,
                   "src": "398:9:1",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
@@ -1048,9 +1048,60 @@
     "name": "solc",
     "version": "0.5.2+commit.1df8f40c.Emscripten.clang"
   },
-  "networks": {},
+  "networks": {
+    "1552171724676": {
+      "events": {
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event",
+          "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
+        }
+      },
+      "links": {},
+      "address": "0x45939f062cEE651c2552D92C17bA9388B6454039",
+      "transactionHash": "0x7290c3a4604e1ecd29d2f5472c94d311bf93a30d7bdac415fe422d7050a5a658"
+    },
+    "1552193683271": {
+      "events": {
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event",
+          "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
+        }
+      },
+      "links": {},
+      "address": "0xE00B2235B3bfE21b561fD388fefE3d70de37cc3b",
+      "transactionHash": "0x57a9a4daf611b11b0c266c478341aa5a379c241a94524d30fcf1af0b3c1299b2"
+    }
+  },
   "schemaVersion": "3.0.2",
-  "updatedAt": "2019-03-10T02:28:36.493Z",
+  "updatedAt": "2019-03-10T05:39:48.503Z",
   "devdoc": {
     "methods": {
       "isOwner()": {
