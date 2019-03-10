@@ -19,7 +19,7 @@
         </div>
 
 
-        <div v-for="project in subject.projects" :key="project" class="project p-4">
+        <div v-for="project in subject.projects" :key="project" class="project p-4 mx-2">
           <img :src="project.logoImage" alt="" width="50px" height="50px" class="project__image">
           <h5 class="mt-3 font-weight-bold mb-0">{{ project.title }}</h5>
           <p class="text-clear">{{project.externalLink}}</p>

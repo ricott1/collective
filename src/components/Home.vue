@@ -90,9 +90,12 @@ export default {
         const web3 = this.$store.state.web3.instance()
         const Contract = contract(FundingToken)
 
+        console.log("test0")
         Contract.setProvider(this.$store.state.web3.instance().currentProvider)
+        console.log("test")
         Contract.deployed()
           .then(contractInstance => {
+            console.log("test2")
             web3.eth.getAccounts((error, accounts) => {
               contractInstance
                 .getFundedProjectCount({ from: accounts[0] })
