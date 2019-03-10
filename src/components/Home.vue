@@ -35,9 +35,15 @@
         </div>
         <h2>OR</h2>
         <div class="">
-          <h4>Convert Ether</h4>
+          <h4>1 ETH -> {{ mintRate }} CVT</h4>
           <input class="mb-4" type="text" name="" v-model="buyAmountInput"><br/>
           <button type="button" name="button" class="form-btn" @click="buy">Buy</button>
+        </div>
+        <h2>OR</h2>
+        <div class="">
+          <h4>1 CVT -> {{ burnRate }} ETH</h4>
+          <input class="mb-4" type="text" name="" v-model="burnAmount"><br/>
+          <button type="button" name="button" class="form-btn" @click="sell">Sell</button>
         </div>
       </div>
     </div>
@@ -70,7 +76,10 @@ export default {
       projects: [],
       tokensAmount: 0,
       subscribeAmountInput: 0,
-      buyAmountInput: 0
+      buyAmountInput: 0,
+      burnRate: 0,
+      mintRate: 0,
+      burnAmount: 0
     }
   },
   components: {
@@ -129,6 +138,18 @@ export default {
         })
       }
     },
+    sell() {
+      if (this.$store.state.web3.instance) {
+        const web3 = this.$store.state.web3.instance()
+        const fundingContract = new web3.eth.Contract(FundingToken.abi, FundingToken.address)
+
+        web3.eth.getAccounts().then(accounts => {
+          fundingContract.methods.burn(this.burnAmount * 100000000000000).send({ from: accounts[0] }).then(ok => {
+            this.loadState()
+          })
+        })
+      }
+    },
     subscribe() {
       // this.subscribeAmountInput
       if (this.$store.state.web3.instance) {
@@ -180,9 +201,32 @@ export default {
         })
       }
     },
+    getMintRate() {
+      console.log("HERE");
+      if (this.$store.state.web3.instance) {
+        const web3 = this.$store.state.web3.instance()
+        const fundingContract = new web3.eth.Contract(FundingToken.abi, FundingToken.address)
+
+        fundingContract.methods.calculateContinuousMintReturn(1 * 10000000).call().then(rate => {
+          this.mintRate = rate / 1000
+        })
+      }
+    },
+    getBurnRate() {
+      if (this.$store.state.web3.instance) {
+        const web3 = this.$store.state.web3.instance()
+        const fundingContract = new web3.eth.Contract(FundingToken.abi, FundingToken.address)
+
+        fundingContract.methods.calculateContinuousBurnReturn(1).call().then(rate => {
+          this.burnRate = rate / 10000
+        })
+      }
+    },
     loadState() {
       this.getFundedProjects()
       this.getUserTokens()
+      this.getMintRate()
+      this.getBurnRate()
     },
   },
   mounted() {
