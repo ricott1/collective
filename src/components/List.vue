@@ -6,7 +6,10 @@
       :current-view="currentView"
     /> -->
 
-    <input type="number" name="" v-model="buyAmount">
+    <div class="box m-4 p-4">
+      <h4>1. Amount to invest</h4>
+      <input type="number" name="" v-model="buyAmount" id="mainInput">
+    </div>
 
     <div class="projects-container pb-4 pl-4 pt-4 m-4 d-flex flex-column align-items-stretch"  style="overflow: hidden;">
       <div v-for="subject in categories" class="mb-4" style="overflow: hidden;">
@@ -27,10 +30,10 @@
           <p class="text-clear">{{project.externalLink || 'https://mywebsite.com' }}</p>
           <p>{{ project.description || 'An amazing description'}}</p>
 
-          <div class="d-flex justify-content-between">
+          <div class="d-flex justify-content-between align-items-center">
             <div class="tag">{{ Math.round(project.funds / project.min * 100) }}% to minimum</div>
 
-            <button type="button" name="button" @click="fundProject(project)">Fund</button>
+            <button type="button" name="button" class="form-btn" @click="fundProject(project)">Invest {{ buyAmount }} CVT</button>
           </div>
         </div>
 
@@ -63,7 +66,7 @@ export default {
   data () {
     return {
       projects: [],
-      buyAmount: 0
+      buyAmount: 1
     }
   },
   components: {
@@ -131,6 +134,10 @@ import FooterTemplate from './layout/FooterTemplate'
 </script>
 
 <style scoped>
+.form-btn {
+  width: auto;
+  padding: 8px;
+}
   #home {
     width: 100%;
   }
@@ -160,5 +167,9 @@ import FooterTemplate from './layout/FooterTemplate'
     color: rgb(21, 27, 68);
     font-weight: 500;
     align-self: stretch;
+  }
+  #mainInput {
+    width: 400px;
+    margin: 0 auto;
   }
 </style>

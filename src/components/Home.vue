@@ -11,11 +11,18 @@
 
       <h3>Join the economy</h3>
 
-      <input type="text" name="" v-model="subscribeAmountInput">
-      <button type="button" name="button" @click="subscribe">Confirm</button>
-
-      <input type="text" name="" v-model="buyAmountInput">
-      <button type="button" name="button" @click="buy">Buy</button>
+      <div class="d-flex my-4">
+        <div class="">
+          <h5>Suscribe with advantages</h5>
+          <input type="text" name="" v-model="subscribeAmountInput">
+          <button type="button" name="button" class="form-btn" @click="subscribe">Confirm</button>
+        </div>
+        <div class="">
+          <h5>Buy tokens</h5>
+          <input type="text" name="" v-model="buyAmountInput">
+          <button type="button" name="button" class="form-btn" @click="buy">Buy</button>
+        </div>
+      </div>
 
       <h3>My funded projects</h3>
       <div v-for="project in projects" :key="project" class="project p-4">
