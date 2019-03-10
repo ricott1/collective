@@ -55,8 +55,9 @@ contract FundingToken is ContinuousToken {
         if (now - lastSubscriptionTime[_beneficiary] > 2 * timeframe) {
             subscriptions[_beneficiary] = 1;
         } else if (now - lastSubscriptionTime[_beneficiary] >= timeframe){
-            subscriptions[_beneficiary] += 1;
+            subscriptions[_beneficiary] = subscriptions[_beneficiary] + 1;
         }
+        lastSubscriptionTime[_beneficiary] = now;
         
         uint256 _subscriptionModifier = getSubscriptionModifier(subscriptions[_beneficiary]);
         _continuousMint(msg.value * _subscriptionModifier/100, _beneficiary);
