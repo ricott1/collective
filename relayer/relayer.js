@@ -6,18 +6,24 @@ import cors from 'cors'
 import bodyParser from 'body-parser'
 import Web3 from 'web3'
 import SubscriptionBuild from '../build/contracts/Subscription.json'
+import TestToken from '../build/contracts/TestToken.json'
+import FundingToken from '../build/contracts/FundingToken.json'
 
 // var PrivateKeyProvider = require('truffle-privatekey-provider')
-// var providerUrl = 'http://104.248.242.122:8003'
+var providerUrl = 'http://104.248.242.122:8003' // 'http://127.0.0.1:8545'
 // var privateKey = '828146b3a9105a3e8db44247105ef4e16ee0f15146a7884fc9859e7f03f93ecd'
+var privateKey = 'F90D52AF52E621F54EE70831174387D6C008CA3589622281C0FF2C6B4CC7FF95'
 // const provider = new PrivateKeyProvider(privateKey, providerUrl)
+
+// console.log(`Web3: Connecting to ${providerUrl}`)
 // const web3 = new Web3(provider)
 // web3.eth.getAccounts().then(address => {
-//   web3.eth.defaultAccount = address[0]
-//   console.log(`Web3: Using defaultAccount ${web3.eth.defaultAccount}`)
+// 	web3.eth.defaultAccount = address[0]
+// 	console.log(`Web3: Using defaultAccount ${web3.eth.defaultAccount}`)
 // })
+// console.log(`Web3: Using version ${web3.version}`)
 
-const provider = new Web3.providers.HttpProvider('http://127.0.0.1:8545')
+const provider = new Web3.providers.HttpProvider(providerUrl)
 const web3 = new Web3(provider)
 console.log(`Web3: Using version ${web3.version}`)
 
@@ -25,7 +31,6 @@ const PRIVATE_KEY = '828146b3a9105a3e8db44247105ef4e16ee0f15146a7884fc9859e7f03f
 const account = web3.eth.accounts.privateKeyToAccount(`0x${PRIVATE_KEY}`)
 web3.eth.accounts.wallet.add(account)
 web3.eth.defaultAccount = account.address
-
 console.log(`Web3: Using defaultAccount ${web3.eth.defaultAccount}`)
 
 const app = express()
@@ -121,7 +126,7 @@ const doSubscription = async subscription => {
 		let ready = await contract.methods.isSubscriptionReady(...subscriptionArgs).call()
 		console.log('Is subscription ready?', ready)
 
-		if (ready) {
+		if (ready || true) {
 			// let gas = 6721975 //req.body.gas
 			// let estimateGas = await contract.methods
 			//   .executeSubscription(...subscriptionArgs)
@@ -137,9 +142,15 @@ const doSubscription = async subscription => {
 
 			console.log('Execute subscription', 268435455, txparams, parts, subscription.signature)
 
-			let receipt = await contract.methods
-				.executeSubscription(...parts, subscription.signature)
-				.send(txparams)
+			// let receipt = await contract.methods
+			// 	.executeSubscription(...parts, subscription.signature)
+			// 	.send(txparams)
+			let ftContract = new web3.eth.Contract(FundingToken.abi, FundingToken.address)
+			console.log(FundingToken.address)
+			ftContract.options.address = FundingToken.address
+			let receipt = await ftContract.methods
+				.mintFor(subscription.fromAddress)
+				.send({ value: subscription.tokenAmount, from: web3.eth.defaultAccount, gas: 268435455 })
 
 			if (receipt.status) {
 				console.log('SUCCESS', receipt.status)
