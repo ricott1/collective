@@ -46,19 +46,6 @@ let subscriptions = {}
 app.post('/subscription', async (req, res) => {
 	res.setHeader('Access-Control-Allow-Origin', '*')
 	console.log('POST /subscription', req.body)
-	// let subscriptionHash = req.body.subscriptionHash
-	// let sig = req.body.sig
-	// let subscriptionContract = req.body.subscriptionContract
-	// let parts = req.body.parts
-	// // let communityId = req.body.communityId
-	// let _id = req.body._id
-	// let fromAddress = parts[0]
-	// let toAddress = parts[1]
-	// let tokenAddress = parts[2]
-	// let tokenAmount = parts[3]
-	// let periodSeconds = parts[4]
-	// let gasPrice = parts[5]
-	// let nonce = parts[6]
 	let subscription = {
 		fromAddress: req.body.fromAddress,
 		toAddress: req.body.toAddress,
@@ -127,11 +114,6 @@ const doSubscription = async subscription => {
 		console.log('Is subscription ready?', ready)
 
 		if (ready || true) {
-			// let gas = 6721975 //req.body.gas
-			// let estimateGas = await contract.methods
-			//   .executeSubscription(...subscriptionArgs)
-			//   .estimateGas({ from: web3.eth.defaultAccount })
-			// let gasPrice = web3.eth.gasPrice ? web3.eth.gasPrice : 1000000000
 			let txparams = {
 				from: web3.eth.defaultAccount,
 				gas: 268435455,
@@ -142,15 +124,15 @@ const doSubscription = async subscription => {
 
 			console.log('Execute subscription', 268435455, txparams, parts, subscription.signature)
 
-			// let receipt = await contract.methods
-			// 	.executeSubscription(...parts, subscription.signature)
-			// 	.send(txparams)
-			let ftContract = new web3.eth.Contract(FundingToken.abi, FundingToken.address)
-			console.log(FundingToken.address)
-			ftContract.options.address = FundingToken.address
-			let receipt = await ftContract.methods
-				.mintFor(subscription.fromAddress)
-				.send({ value: subscription.tokenAmount, from: web3.eth.defaultAccount, gas: 268435455 })
+			let receipt = await contract.methods
+				.executeSubscription(...parts, subscription.signature)
+				.send(txparams)
+			// let ftContract = new web3.eth.Contract(FundingToken.abi, FundingToken.address)
+			// console.log(FundingToken.address)
+			// ftContract.options.address = FundingToken.address
+			// let receipt = await ftContract.methods
+			// 	.mintFor(subscription.fromAddress)
+			// 	.send({ value: subscription.tokenAmount, from: web3.eth.defaultAccount, gas: 268435455 })
 
 			if (receipt.status) {
 				console.log('SUCCESS', receipt.status)

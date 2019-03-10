@@ -71,7 +71,6 @@ import ContinuousToken from '../../build/contracts/ContinuousToken.json'
 import TestToken from '../../build/contracts/TestToken.json'
 import FundingToken from '../../build/contracts/FundingToken.json'
 import Subscription from '../../build/contracts/Subscription.json'
-import TestToken from '../../build/contracts/TestToken.json'
 import { mapState } from 'vuex'
 import axios from 'axios'
 
