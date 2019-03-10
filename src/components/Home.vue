@@ -8,33 +8,16 @@
     <h1>My funded projects</h1>
     <p>Status: Funded / Closing in 5 hours</p>
     <p>My actual share</p>
-    <button v-on:click="buttonClick">Create Subscription</button>
 
     <div class="projects-container pb-4 pl-4 pt-4 m-4 d-flex flex-column align-items-stretch">
-      <div v-for="subject in categories" class="mb-4">
-        <div class="d-flex align-items-baseline">
-          <h3 class="mb-4 mr-3">#{{ subject.title }}</h3>
-          <vac :end-time="subject.endDate">
-            <span slot="process" slot-scope="{ timeObj }">{{
-              `ends in ${timeObj.d} days, ${timeObj.m} minutes ${timeObj.s} seconds`
-            }}</span>
-            <span slot="finish">Ended !</span>
-          </vac>
-        </div>
+      <div v-for="project in projects" :key="project" class="project p-4">
+        <img :src="project.logoImage" alt="" width="50px" height="50px" class="project__image" />
+        <h5 class="mt-3 font-weight-bold mb-0">{{ project.title }}</h5>
+        <p class="text-clear">{{ project.externalLink }}</p>
+        <p>{{ project.description }}</p>
 
-        <div v-for="project in subject.projects" :key="project" class="project p-4">
-          <img :src="project.logoImage" alt="" width="50px" height="50px" class="project__image" />
-          <h5 class="mt-3 font-weight-bold mb-0">{{ project.title }}</h5>
-          <p class="text-clear">{{ project.externalLink }}</p>
-          <p>{{ project.description }}</p>
-
-          <div class="d-flex justify-content-between">
-            <div class="tag">{{ project.progress }}% to minimum</div>
-          </div>
-        </div>
-
-        <div v-if="!subject.projects || !subject.projects.length">
-          <div class="no-project py-4 text-center mr-4">No projects yet</div>
+        <div class="d-flex justify-content-between">
+          <div class="tag">{{ project.progress }}% to minimum</div>
         </div>
       </div>
     </div>
@@ -48,6 +31,9 @@ const cameraImage = require('@/assets/video-camera.svg')
 
 import contract from 'truffle-contract'
 import ContinuousToken from '../../build/contracts/ContinuousToken.json'
+import FundingToken from '../../build/contracts/FundingToken.json'
+import TestToken from '../../build/contracts/FundingToken.json'
+import Subscription from '../../build/contracts/Subscription.json'
 import { mapState } from 'vuex'
 import axios from 'axios'
 
@@ -58,9 +44,9 @@ export default {
       categories: state => state.categories,
     }),
   },
-  data () {
+  data() {
     return {
-      projects: []
+      projects: [],
     }
   },
   components: {
@@ -78,63 +64,58 @@ export default {
     selectCategory(i) {
       this.selectedCategory = i
     },
-    buttonClick: async function(event) {
-      console.log('Click')
-      event.preventDefault()
-      const parts = [
-        fromAddress,
-        toAddress,
-        tokenAddress,
-        web3.utils.toTwosComplement(tokenAmount),
-        web3.utils.toTwosComplement(periodSeconds),
-        web3.utils.toTwosComplement(gasPrice),
-        web3.utils.toTwosComplement(0), // nonce
-      ]
-      const subscriptionHash = await contract.methods.getSubscriptionHash(...parts).call()
-
-      // Let the user sign the hash
-      let signature = await web3.eth.personal.sign('' + subscriptionHash, fromAddress)
-
-      let postData = {
-        fromAddress: fromAddress,
-        toAddress: toAddress,
-        tokenAddress: tokenAddress,
-        tokenAmount: tokenAmount,
-        subscriptionHash: subscriptionHash,
-        contractAddress: '',
-        signature: signature,
+    createSubscription() {
+      if (this.$store.state.web3.instance) {
+        // const web3 = this.$store.state.web3.instance()
+        // const contract = contract(Subscription)
+        // const parts = [
+        //   fromAddress,
+        //   toAddress,
+        //   tokenAddress,
+        //   web3.utils.toTwosComplement(tokenAmount),
+        //   web3.utils.toTwosComplement(periodSeconds),
+        //   web3.utils.toTwosComplement(gasPrice),
+        //   web3.utils.toTwosComplement(0), // nonce
+        // ]
+        // const subscriptionHash = await contract.methods.getSubscriptionHash(...parts).call()
       }
-      let response = await axios.post('http://127.0.0.1:9999', postData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
+    },
+    getFundedProjects() {
+      if (this.$store.state.web3.instance) {
+        const web3 = this.$store.state.web3.instance()
+        const Contract = contract(FundingToken)
+        console.log(Contract)
 
-      console.log(response)
+        Contract.setProvider(this.$store.state.web3.instance().currentProvider)
+        Contract.deployed()
+          .then(contractInstance => {
+            web3.eth.getAccounts((error, accounts) => {
+              contractInstance
+                .getFundedProjectCount({ from: accounts[0] })
+                .then(count => {
+                  for (var i = 0; i < count.toNumber(); i++) {
+                    console.log(i)
+                    contractInstance
+                      .getFundedProjectByIndex(i)
+                      .then(ret => {
+                        console.log(ret)
+                        this.projects.push(ret)
+                        // TODO Push project id
+                      })
+                      .catch(err => console.log(err))
+                  }
+                })
+                .catch(err => console.log(err))
+            })
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      }
     },
   },
   mounted() {
-    if (this.$store.state.web3.instance) {
-      const web3 = this.$store.state.web3.instance()
-      const Contract = contract(FundingToken)
-
-      Contract.setProvider(this.$store.state.web3.instance().currentProvider)
-      Contract.deployed().then(contractInstance => {
-        web3.eth.getAccounts((error, accounts) => {
-          console.log(contractInstance);
-          contractInstance.getProjectCount({from: accounts[0]}).then(count => {
-            console.log(count.toNumber())
-            for (var i = 0; i < count.toNumber(); i++) {
-              contractInstance.getProjectByIndex(i).then(ret => {
-                projects.push(ret)
-              })
-            }
-          }).catch(err => console.log(err))
-        });
-      }).catch(err => {
-        console.log(err)
-      })
-    }
+    this.getFundedProjects()
   },
 }
 
