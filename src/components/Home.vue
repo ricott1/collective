@@ -167,8 +167,11 @@ export default {
             for (var i = 0; i < count; i++) {
               fundingContract.methods.fundedProjects(accounts[0], i).call().then(address => {
                 fundingContract.methods.getProjectByAddress(address).call().then(project => {
-                  console.log(project);
-                  this.projects.push(project)
+                  const found = !!this.projects.filter(el => el.address == address).length
+                  if (!found) {
+                    console.log(project);
+                    this.projects.push({ ...project, address })
+                  }
                 })
               })
             }
