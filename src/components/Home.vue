@@ -5,11 +5,10 @@
       :current-view="currentView"
     /> -->
 
-    <h1>My funded projects</h1>
-    <p>Status: Funded / Closing in 5 hours</p>
-    <p>My actual share</p>
-
     <div class="projects-container pb-4 pl-4 pt-4 m-4 d-flex flex-column align-items-stretch">
+      <h1>Dashboard</h1>
+      <p>I have {{ tokensAmount }} tokens</p>
+      <p>My actual share</p>
       <div v-for="project in projects" :key="project" class="project p-4">
         <img :src="project.logoImage" alt="" width="50px" height="50px" class="project__image" />
         <h5 class="mt-3 font-weight-bold mb-0">{{ project.title }}</h5>
@@ -32,7 +31,6 @@ const cameraImage = require('@/assets/video-camera.svg')
 import contract from 'truffle-contract'
 import ContinuousToken from '../../build/contracts/ContinuousToken.json'
 import FundingToken from '../../build/contracts/FundingToken.json'
-import TestToken from '../../build/contracts/FundingToken.json'
 import Subscription from '../../build/contracts/Subscription.json'
 import { mapState } from 'vuex'
 import axios from 'axios'
@@ -42,11 +40,13 @@ export default {
   computed: {
     ...mapState({
       categories: state => state.categories,
+      isDAppReady: state => state.isDAppReady,
     }),
   },
   data() {
     return {
       projects: [],
+      tokensAmount: 0
     }
   },
   components: {
@@ -80,11 +80,15 @@ export default {
         // const subscriptionHash = await contract.methods.getSubscriptionHash(...parts).call()
       }
     },
+    getUserTokens() {
+      if (this.$store.state.web3.instance) {
+
+      }
+    },
     getFundedProjects() {
       if (this.$store.state.web3.instance) {
         const web3 = this.$store.state.web3.instance()
         const Contract = contract(FundingToken)
-        console.log(Contract)
 
         Contract.setProvider(this.$store.state.web3.instance().currentProvider)
         Contract.deployed()
@@ -113,10 +117,19 @@ export default {
           })
       }
     },
+    loadState() {
+      this.getFundedProjects()
+      this.getUserTokens()
+    },
   },
   mounted() {
-    this.getFundedProjects()
+    this.loadState()
   },
+  watch: {
+    isDAppReady() {
+      this.loadState()
+    }
+  }
 }
 
 import HeaderTemplate from './layout/HeaderTemplate'

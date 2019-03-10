@@ -1,6 +1,9 @@
 <template>
   <div class="top-bar d-flex align-items-center px-4">
-    <h3>Projects</h3>
+    <h3>Crowdfunding</h3>
+    <div style="flex: 1;">
+
+    </div>
     <div v-if="web3.coinbase" class="">
       <div>My account</div>
       <div>{{ web3.coinbase }}</div>
