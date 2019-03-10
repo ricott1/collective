@@ -26,12 +26,8 @@
           <p>{{ project.description || 'An amazing description' }}</p>
 
           <div class="d-flex justify-content-between">
-            <div class="tag">
-              {{
-                project.funds - project.min < 0
-                  ? Math.round((project.funds / project.min) * 100)
-                  : 100
-              }}% funded
+            <div class="tag" :class="{ activated: Number(project.funds) > Number(project.min) }">
+              {{ Math.round((project.funds / project.min) * 100) }}% funded
             </div>
           </div>
         </div>
@@ -50,9 +46,15 @@
         </div>
         <h2>OR</h2>
         <div class="">
-          <h4>Buy tokens</h4>
+          <h4>1 ETH -> {{ mintRate }} CVT</h4>
           <input class="mb-4" type="text" name="" v-model="buyAmountInput" /><br />
           <button type="button" name="button" class="form-btn" @click="buy">Buy</button>
+        </div>
+        <h2>OR</h2>
+        <div class="">
+          <h4>1 CVT -> {{ burnRate }} ETH</h4>
+          <input class="mb-4" type="text" name="" v-model="burnAmount" /><br />
+          <button type="button" name="button" class="form-btn" @click="sell">Sell</button>
         </div>
       </div>
     </div>
@@ -66,6 +68,7 @@ const cameraImage = require('@/assets/video-camera.svg')
 
 import contract from 'truffle-contract'
 import ContinuousToken from '../../build/contracts/ContinuousToken.json'
+import TestToken from '../../build/contracts/TestToken.json'
 import FundingToken from '../../build/contracts/FundingToken.json'
 import Subscription from '../../build/contracts/Subscription.json'
 import TestToken from '../../build/contracts/TestToken.json'
@@ -86,6 +89,9 @@ export default {
       tokensAmount: 0,
       subscribeAmountInput: 0,
       buyAmountInput: 0,
+      burnRate: 0,
+      mintRate: 0,
+      burnAmount: 0,
     }
   },
   components: {
@@ -106,10 +112,7 @@ export default {
     getUserTokens() {
       if (this.$store.state.web3.instance) {
         const web3 = this.$store.state.web3.instance()
-        const fundingContract = new web3.eth.Contract(
-          FundingToken.abi,
-          '0x958733cd16f2efda8444dec02e8fde6e345c0580'
-        )
+        const fundingContract = new web3.eth.Contract(FundingToken.abi, FundingToken.address)
 
         web3.eth.getAccounts().then(accounts => {
           console.log(accounts)
@@ -125,15 +128,27 @@ export default {
     buy() {
       if (this.$store.state.web3.instance) {
         const web3 = this.$store.state.web3.instance()
-        const fundingContract = new web3.eth.Contract(
-          FundingToken.abi,
-          '0x958733cd16f2efda8444dec02e8fde6e345c0580'
-        )
+        const fundingContract = new web3.eth.Contract(FundingToken.abi, FundingToken.address)
 
         web3.eth.getAccounts().then(accounts => {
           fundingContract.methods
             .mint()
             .send({ from: accounts[0], value: 1000000000000000000 * this.buyAmountInput })
+            .then(ok => {
+              this.loadState()
+            })
+        })
+      }
+    },
+    sell() {
+      if (this.$store.state.web3.instance) {
+        const web3 = this.$store.state.web3.instance()
+        const fundingContract = new web3.eth.Contract(FundingToken.abi, FundingToken.address)
+
+        web3.eth.getAccounts().then(accounts => {
+          fundingContract.methods
+            .burn(this.burnAmount * 100000000000000)
+            .send({ from: accounts[0] })
             .then(ok => {
               this.loadState()
             })
@@ -191,10 +206,7 @@ export default {
     getFundedProjects() {
       if (this.$store.state.web3.instance) {
         const web3 = this.$store.state.web3.instance()
-        const fundingContract = new web3.eth.Contract(
-          FundingToken.abi,
-          '0x958733cd16f2efda8444dec02e8fde6e345c0580'
-        )
+        const fundingContract = new web3.eth.Contract(FundingToken.abi, FundingToken.address)
 
         web3.eth.getAccounts().then(accounts => {
           fundingContract.methods
@@ -223,9 +235,38 @@ export default {
         })
       }
     },
+    getMintRate() {
+      console.log('HERE')
+      if (this.$store.state.web3.instance) {
+        const web3 = this.$store.state.web3.instance()
+        const fundingContract = new web3.eth.Contract(FundingToken.abi, FundingToken.address)
+
+        fundingContract.methods
+          .calculateContinuousMintReturn(1 * 10000000)
+          .call()
+          .then(rate => {
+            this.mintRate = rate / 1000
+          })
+      }
+    },
+    getBurnRate() {
+      if (this.$store.state.web3.instance) {
+        const web3 = this.$store.state.web3.instance()
+        const fundingContract = new web3.eth.Contract(FundingToken.abi, FundingToken.address)
+
+        fundingContract.methods
+          .calculateContinuousBurnReturn(1)
+          .call()
+          .then(rate => {
+            this.burnRate = rate / 10000
+          })
+      }
+    },
     loadState() {
       this.getFundedProjects()
       this.getUserTokens()
+      this.getMintRate()
+      this.getBurnRate()
     },
   },
   mounted() {
