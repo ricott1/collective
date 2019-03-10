@@ -7,16 +7,17 @@
 
     <div class="projects-container pb-4 pl-4 pt-4 m-4 d-flex flex-column align-items-stretch">
       <h1>Dashboard</h1>
-      <p>I have {{ tokensAmount }} tokens</p>
-      <p>My actual share</p>
+      <p>I have {{ tokensAmount / 1000000000000000 }} CVT</p>
 
-      <h1>Subscribe to our service</h1>
+      <h3>Join the economy</h3>
+
       <input type="text" name="" v-model="subscribeAmountInput">
       <button type="button" name="button" @click="subscribe">Confirm</button>
 
+      <input type="text" name="" v-model="buyAmountInput">
+      <button type="button" name="button" @click="buy">Buy</button>
 
-
-      <h1>My projects</h1>
+      <h3>My funded projects</h3>
       <div v-for="project in projects" :key="project" class="project p-4">
         <img :src="project.logoImage" alt="" width="50px" height="50px" class="project__image" />
         <h5 class="mt-3 font-weight-bold mb-0">{{ project.title }}</h5>
@@ -55,7 +56,8 @@ export default {
     return {
       projects: [],
       tokensAmount: 0,
-      subscribeAmountInput: 0
+      subscribeAmountInput: 0,
+      buyAmountInput: 0
     }
   },
   components: {
@@ -102,6 +104,18 @@ export default {
         })
       }
     },
+    buy() {
+      if (this.$store.state.web3.instance) {
+        const web3 = this.$store.state.web3.instance()
+        const fundingContract = new web3.eth.Contract(FundingToken.abi, "0x958733cd16f2efda8444dec02e8fde6e345c0580")
+
+        web3.eth.getAccounts().then(accounts => {
+          fundingContract.methods.mint().send({ from: accounts[0], value: 1000000000000000000 * this.buyAmountInput }).then(ok => {
+            window.reload()
+          })
+        })
+      }
+    },
     subscribe() {
       // this.subscribeAmountInput
       if (this.$store.state.web3.instance) {
@@ -131,7 +145,20 @@ export default {
       }
     },
     getFundedProjects() {
+      if (this.$store.state.web3.instance) {
+        const web3 = this.$store.state.web3.instance()
+        const fundingContract = new web3.eth.Contract(FundingToken.abi, "0x958733cd16f2efda8444dec02e8fde6e345c0580")
 
+        web3.eth.getAccounts().then(accounts => {
+          fundingContract.methods.getFundedProjectCount(accounts[0]).call().then(count => {
+            for (var i = 0; i < count; i++) {
+              fundingContract.methods.fundedProjects(accounts[0], i).call().then(project => {
+                this.projects.push(project)
+              })
+            }
+          })
+        })
+      }
     },
     loadState() {
       this.getFundedProjects()

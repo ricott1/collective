@@ -6,8 +6,8 @@
       :current-view="currentView"
     /> -->
 
-    <div class="projects-container pb-4 pl-4 pt-4 m-4 d-flex flex-column align-items-stretch">
-      <div v-for="subject in categories" class="mb-4">
+    <div class="projects-container pb-4 pl-4 pt-4 m-4 d-flex flex-column align-items-stretch"  style="overflow: hidden;">
+      <div v-for="subject in categories" class="mb-4" style="overflow: hidden;">
         <div class="d-flex align-items-baseline">
           <h3 class="mb-4 mr-3">#{{ subject.title }}</h3>
           <vac :end-time="subject.endDate">
@@ -19,22 +19,22 @@
         </div>
 
 
-        <div v-for="project in subject.projects" :key="project" class="project p-4 mx-2">
-          <img :src="project.logoImage" alt="" width="50px" height="50px" class="project__image">
-          <h5 class="mt-3 font-weight-bold mb-0">{{ project.title }}</h5>
-          <p class="text-clear">{{project.externalLink}}</p>
-          <p>{{ project.description}}</p>
+        <div v-for="project in projects" v-if="project.field == subject.id" :key="project" class="project p-4 mx-2">
+          <img :src="project.logoImage || 'https://99designs-start-attachments.imgix.net/alchemy-pictures/2016%2F02%2F22%2F04%2F24%2F31%2Fb7bd820a-ecc0-4170-8f4e-3db2e73b0f4a%2F550250_artsigma.png?auto=format&ch=Width%2CDPR&w=250&h=250'" alt="" width="50px" height="50px" class="project__image">
+          <h5 class="mt-3 font-weight-bold mb-0">{{ project.title || 'Amazing project' }}</h5>
+          <p class="text-clear">{{project.externalLink || 'https://mywebsite.com' }}</p>
+          <p>{{ project.description || 'An amazing description'}}</p>
 
           <div class="d-flex justify-content-between">
             <div class="tag">
-              {{ project.progress }}% to minimum
+              {{ project.progress || 20 }}% to minimum
             </div>
 
             <button type="button" name="button" @click="fundProject(project)">Fund</button>
           </div>
         </div>
 
-        <div v-if="!subject.projects || !subject.projects.length">
+        <div v-if="!projects.filter(el => el.field == subject.id).length">
           <div class="no-project py-4 text-center mr-4">No projects yet</div>
         </div>
 
@@ -56,7 +56,8 @@ export default {
   name: 'Home',
   computed: {
     ...mapState({
-      categories: state => state.categories
+      categories: state => state.categories,
+      isDAppReady: state => state.isDAppReady,
     })
   },
   data () {
@@ -77,55 +78,62 @@ export default {
   },
   methods: {
     fundProject(project) {
-      console.log(project)
-      // projectList[index]
-
-      if (this.$store.state.web3.instance) {
-        const web3 = this.$store.state.web3.instance()
-        const Contract = contract(FundingToken)
-
-        Contract.setProvider(this.$store.state.web3.instance().currentProvider)
-        Contract.deployed().then(contractInstance => {
-          web3.eth.getAccounts((error, accounts) => {
-            console.log(contractInstance);
-            const projectAddress = contractInstance.projectList[index]
-            fundByAddress(projectAddress)
-          });
-        }).catch(err => {
-          console.log(err)
-        })
-      }
+      // if (this.$store.state.web3.instance) {
+      //   const web3 = this.$store.state.web3.instance()
+      //   const fundingContract = new web3.eth.Contract(FundingToken.abi, "0x958733cd16f2efda8444dec02e8fde6e345c0580")
+      //
+      //   web3.eth.getAccounts().then(accounts => {
+      //     fundingContract.methods.fundedProjects()
+      //     console.log(fundingContract)
+      //     // fundingContract.methods.getFundedProjectCount(accounts[0]).call().then(amount => {
+      //     //   this.tokensAmount = amount;
+      //     // })
+      //   })
+      // }
+      // console.log(project)
+      // // projectList[index]
+      //
+      // if (this.$store.state.web3.instance) {
+      //   const web3 = this.$store.state.web3.instance()
+      //   const Contract = contract(FundingToken)
+      //
+      //   Contract.setProvider(this.$store.state.web3.instance().currentProvider)
+      //   Contract.deployed().then(contractInstance => {
+      //     web3.eth.getAccounts((error, accounts) => {
+      //       console.log(contractInstance);
+      //       const projectAddress = contractInstance.projectList[index]
+      //       fundByAddress(projectAddress)
+      //     });
+      //   }).catch(err => {
+      //     console.log(err)
+      //   })
+      // }
     },
     getProjects() {
       if (this.$store.state.web3.instance) {
         const web3 = this.$store.state.web3.instance()
-        const Contract = contract(FundingToken)
+        const fundingContract = new web3.eth.Contract(FundingToken.abi, "0x958733cd16f2efda8444dec02e8fde6e345c0580")
 
-        Contract.setProvider(this.$store.state.web3.instance().currentProvider)
-        Contract.deployed().then(contractInstance => {
-          web3.eth.getAccounts((error, accounts) => {
-            contractInstance.getProjectCount({from: accounts[0]}).then(count => {
-              for (var i = 0; i < count.toNumber(); i++) {
-                console.log(i);
-                contractInstance.getProjectByIndex(i).then(ret => {
-                  console.log(ret);
-                  this.projects.push({
-                    ...ret,
-                    i
-                  })
-                  // TODO Push project id
-                }).catch(err => console.log(err))
-              }
-            }).catch(err => console.log(err))
-          });
-        }).catch(err => {
-          console.log(err)
+        fundingContract.methods.getProjectCount().call().then(count => {
+          for (var i = 0; i < count; i++) {
+            fundingContract.methods.getProjectByIndex(i).call().then(ret => {
+              this.projects.push({...ret, i })
+            })
+          }
         })
       }
+    },
+    loadState() {
+      this.getProjects()
     }
   },
   mounted() {
-    this.getProjects()
+    this.loadState()
+  },
+  watch: {
+    isDAppReady() {
+      this.loadState()
+    }
   }
 }
 
@@ -152,7 +160,7 @@ import FooterTemplate from './layout/FooterTemplate'
     border: 1px solid rgb(230, 235, 237);
     border-radius: 4px;
     float: left;
-    max-width: 30%;
+    width: 25%;
   }
   .project__image {
     object-fit: cover;
