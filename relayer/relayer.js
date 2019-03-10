@@ -7,14 +7,26 @@ import bodyParser from 'body-parser'
 import Web3 from 'web3'
 import SubscriptionBuild from '../build/contracts/Subscription.json'
 
-const provider = new Web3.providers.HttpProvider('http://127.0.0.1:8545')
+var PrivateKeyProvider = require('truffle-privatekey-provider')
+var providerUrl = 'http://104.248.242.122:8003'
+var privateKey = '828146b3a9105a3e8db44247105ef4e16ee0f15146a7884fc9859e7f03f93ecd'
+const provider = new PrivateKeyProvider(privateKey, providerUrl)
 const web3 = new Web3(provider)
-console.log(`Web3: Using version ${web3.version}`)
+web3.eth.getAccounts().then(address => {
+	web3.eth.defaultAccount = address[0]
+	console.log(`Web3: Using defaultAccount ${web3.eth.defaultAccount}`)
+})
 
-const PRIVATE_KEY = '54e4ac80822a6f3010789ef31ac7eae17e1efd4c3c6ba45f5912361f53af065a'
-const account = web3.eth.accounts.privateKeyToAccount(`0x${PRIVATE_KEY}`)
-web3.eth.accounts.wallet.add(account)
-web3.eth.defaultAccount = account.address
+// const provider = new Web3.providers.HttpProvider('http://127.0.0.1:8545')
+// const web3 = new Web3(provider)
+// console.log(`Web3: Using version ${web3.version}`)
+
+// const PRIVATE_KEY = '54e4ac80822a6f3010789ef31ac7eae17e1efd4c3c6ba45f5912361f53af065a'
+// const account = web3.eth.accounts.privateKeyToAccount(`0x${PRIVATE_KEY}`)
+// web3.eth.accounts.wallet.add(account)
+// web3.eth.defaultAccount = account.address
+
+console.log(`Web3: Using version ${web3.eth.defaultAccount}`)
 
 const app = express()
 app.use(bodyParser.json())
@@ -24,7 +36,7 @@ app.use(cors())
 // app.use(apiRoot, routes)
 
 // in-memory subscription db
-let subscriptionsList = []
+let subscriptions = {}
 
 app.post('/subscription', async (req, res) => {
 	res.setHeader('Access-Control-Allow-Origin', '*')
@@ -51,7 +63,7 @@ app.post('/subscription', async (req, res) => {
 		gasPrice: 0,
 		nonce: 0,
 		subscriptionHash: req.body.subscriptionHash,
-		contractAddress: '',
+		contractAddress: req.body.toAddress,
 		signature: req.body.signature,
 	}
 
@@ -59,12 +71,13 @@ app.post('/subscription', async (req, res) => {
 	// check if sig was signed by fromAddress
 	if (account.toLowerCase() === fromAddress.toLowerCase()) {
 		console.log('Correct sig... save subscription')
-		if (subscriptionsList.includes(subscription.subscriptionHash)) {
+		if (!Object.keys(subscriptions).includes(subscription.subscriptionHash)) {
 			try {
 				console.log('Subscription not present, adding it')
 
 				res.send({ message: 'Subscription created successfully' })
 
+				subscriptions[subscription.subscriptionHash] = subscription
 				doSubscription(subscription)
 			} catch (error) {
 				console.error(error)
@@ -123,13 +136,23 @@ const doSubscription = async subscription => {
 				console.log('SUCCESS', receipt.status)
 			}
 		}
-
-		// update active status in all cases
-		await subscription.updateActive()
 	} catch (error) {
 		console.error(error)
 	}
 }
+
+// Check subscription every minute
+setInterval(async () => {
+	console.log('Subscription checker: Loop through all subscriptions')
+	try {
+		Object.keys(subscriptions).map(key => {
+			let subscription = subscriptions[key]
+			doSubscription(subscription)
+		})
+	} catch (error) {
+		console.error(error)
+	}
+}, 30000)
 
 app.listen(9999)
 console.log(`Express: Server listening on port ${9999}`)
