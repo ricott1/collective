@@ -90,7 +90,7 @@ export default {
         web3.eth.getAccounts().then(accounts => {
           fundingContract.methods.projectList(project.i).call().then(project => {
             console.log(this.buyAmount);
-            fundingContract.methods.fundByAddress(project, this.buyAmount).send({ from: accounts[0] }).then(ret => {
+            fundingContract.methods.fundByAddress(project, this.buyAmount * 100000000000000).send({ from: accounts[0] }).then(ret => {
               this.$toasted.show('Sent', {type: 'success', position: 'bottom-center'})
             }).catch(err => {
               console.log(err);

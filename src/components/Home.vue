@@ -25,7 +25,7 @@
 
     <div class="box p-4 m-4">
       <h4 class="mb-3">Join the economy</h4>
-      <p>Balance: {{ tokensAmount / 100000000000000000 }} CVT</p>
+      <p>Balance: {{ tokensAmount / 100000000000000 }} CVT</p>
 
       <div class="d-flex pr-5 justify-content-between align-items-center home-buying">
         <div class="">
