@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
+import List from '@/components/List'
 import Dashboard from '@/components/Dashboard'
 import Profile from '@/components/sections/Profile.vue'
 import ProfileForm from '@/components/sections/ProfileForm.vue'
@@ -20,9 +21,9 @@ export default new Router({
     },
     {
       mode: 'history',
-      path: '/home',
+      path: '/projects',
       name: 'Home',
-      component: Home,
+      component: List,
       meta: { view: Web3Message }
     },
     {
