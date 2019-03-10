@@ -20,18 +20,14 @@
         </div>
       </div>
 
-      <div class="d-flex justify-content-center">
-        <button class="form-btn">NEXT</button>
-      </div>
-
-      <div class="form--one-line d-flex align-items-center flex-column m-5">
+      <div class="form--one-line d-flex align-items-center flex-column mx-5 mb-5">
         <input type="text" v-model="newForm.title" placeholder="Title">
         <input type="text" v-model="newForm.description" placeholder="Description">
+        <input type="text" v-model="newForm.minAmount" placeholder="Minimum amount">
         <!-- <input type="text" v-model="newForm.image"> -->
       </div>
 
       <div class="d-flex justify-content-center">
-        <button class="form-btn grey mr-4">BACK</button>
         <button class="form-btn" @click="addProject">NEXT</button>
       </div>
     </div>
@@ -65,7 +61,8 @@ export default {
       newForm: {
         title: null,
         description: null,
-        image: null
+        image: null,
+        minAmount: 0
       },
     }
   },
@@ -74,22 +71,16 @@ export default {
       this.selectedCategory = i;
     },
     addProject() {
-      // if (this.$store.state.web3.instance) {
-      //   const Contract = contract(ContinuousToken)
-      //   Contract.setProvider(this.$store.state.web3.instance().currentProvider)
-      //   Contract.deployed().then(contractInstance => {
-      //     console.log(contractInstance)
-      //   }).catch(err => {
-      //     console.log(err)
-      //   })
-      // }
       if (this.$store.state.web3.instance) {
-        const Contract = contract(FundingToken)
-        Contract.setProvider(this.$store.state.web3.instance().currentProvider)
-        Contract.deployed().then(contractInstance => {
-          console.log(contractInstance)
-        }).catch(err => {
-          console.log(err)
+        const web3 = this.$store.state.web3.instance()
+        const fundingContract = new web3.eth.Contract(FundingToken.abi, FundingToken.address)
+        web3.eth.getAccounts().then(accounts => {
+          fundingContract.methods.newProject(this.newForm.minAmount * 100000000000000, this.selectedCategory).send({ from: accounts[0] }).then(ret => {
+            this.$toasted.show('Sent', {type: 'success', position: 'bottom-center'})
+          }).catch(err => {
+            console.log(err);
+            this.$toasted.show('Error', {type: 'error', position: 'bottom-center'})
+          })
         })
       }
     }
@@ -116,13 +107,14 @@ import HeaderTemplate from './layout/HeaderTemplate'
   }
   .form--one-line input {
       border: 0;
-      border-bottom: 2px solid rgb(204, 204, 204);
+      border-bottom: 1px solid rgb(230, 227, 227);
       outline: none;
       padding: 10px 0;
       font-size: 1.1rem;
       font-weight: 500;
       color: rgb(41, 41, 41);
-      width: 300px;
+      width: 100%;
+      max-width: 500px;
   }
 
 </style>

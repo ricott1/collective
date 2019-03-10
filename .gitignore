@@ -1,4 +1,3 @@
 node_modules
 app/src/contracts
-build/contracts
 .DS_Store

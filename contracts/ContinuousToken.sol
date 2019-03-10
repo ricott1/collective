@@ -38,11 +38,6 @@ contract ContinuousToken is BancorBondingCurve, Ownable, ERC20, CappedGasPrice {
         _continuousMint(msg.value, msg.sender);
     }
 
-    function mintFor(address _beneficiary) public payable validGasPrice {
-        require(msg.value > 0, "Must send ether to buy tokens.");
-        _continuousMint(msg.value, _beneficiary);
-    }
-
     function burn(uint256 _amount) public validGasPrice {
         uint256 returnAmount = _continuousBurn(_amount);
         msg.sender.transfer(returnAmount);
@@ -66,7 +61,6 @@ contract ContinuousToken is BancorBondingCurve, Ownable, ERC20, CappedGasPrice {
         internal returns (uint256)
     {
         require(_deposit > 0, "Deposit must be non-zero.");
-
         uint256 amount = calculateContinuousMintReturn(_deposit);
         _mint(_beneficiary, amount);
         reserveBalance = reserveBalance.add(_deposit);

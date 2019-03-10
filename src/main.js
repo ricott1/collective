@@ -2,7 +2,9 @@ import Vue from 'vue'
 import App from './components/App.vue'
 import router from './router'
 import store from './store'
+import Toasted from 'vue-toasted';
 
+Vue.use(Toasted)
 import BootstrapVue from 'bootstrap-vue'
 import vueAwesomeCountdown from 'vue-awesome-countdown'
 
