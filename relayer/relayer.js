@@ -7,26 +7,26 @@ import bodyParser from 'body-parser'
 import Web3 from 'web3'
 import SubscriptionBuild from '../build/contracts/Subscription.json'
 
-var PrivateKeyProvider = require('truffle-privatekey-provider')
-var providerUrl = 'http://104.248.242.122:8003'
-var privateKey = '828146b3a9105a3e8db44247105ef4e16ee0f15146a7884fc9859e7f03f93ecd'
-const provider = new PrivateKeyProvider(privateKey, providerUrl)
-const web3 = new Web3(provider)
-web3.eth.getAccounts().then(address => {
-  web3.eth.defaultAccount = address[0]
-  console.log(`Web3: Using defaultAccount ${web3.eth.defaultAccount}`)
-})
-
-// const provider = new Web3.providers.HttpProvider('http://127.0.0.1:8545')
+// var PrivateKeyProvider = require('truffle-privatekey-provider')
+// var providerUrl = 'http://104.248.242.122:8003'
+// var privateKey = '828146b3a9105a3e8db44247105ef4e16ee0f15146a7884fc9859e7f03f93ecd'
+// const provider = new PrivateKeyProvider(privateKey, providerUrl)
 // const web3 = new Web3(provider)
-// console.log(`Web3: Using version ${web3.version}`)
+// web3.eth.getAccounts().then(address => {
+//   web3.eth.defaultAccount = address[0]
+//   console.log(`Web3: Using defaultAccount ${web3.eth.defaultAccount}`)
+// })
 
-// const PRIVATE_KEY = '54e4ac80822a6f3010789ef31ac7eae17e1efd4c3c6ba45f5912361f53af065a'
-// const account = web3.eth.accounts.privateKeyToAccount(`0x${PRIVATE_KEY}`)
-// web3.eth.accounts.wallet.add(account)
-// web3.eth.defaultAccount = account.address
+const provider = new Web3.providers.HttpProvider('http://127.0.0.1:8545')
+const web3 = new Web3(provider)
+console.log(`Web3: Using version ${web3.version}`)
 
-console.log(`Web3: Using version ${web3.eth.defaultAccount}`)
+const PRIVATE_KEY = '828146b3a9105a3e8db44247105ef4e16ee0f15146a7884fc9859e7f03f93ecd'
+const account = web3.eth.accounts.privateKeyToAccount(`0x${PRIVATE_KEY}`)
+web3.eth.accounts.wallet.add(account)
+web3.eth.defaultAccount = account.address
+
+console.log(`Web3: Using defaultAccount ${web3.eth.defaultAccount}`)
 
 const app = express()
 app.use(bodyParser.json())
@@ -115,18 +115,19 @@ const doSubscription = async subscription => {
 
     if (ready) {
       // let gas = 6721975 //req.body.gas
-      let estimateGas = await contract.methods
-        .executeSubscription(...subscriptionArgs)
-        .estimateGas({ from: web3.eth.defaultAccount })
-      let gasPrice = web3.eth.gasPrice ? web3.eth.gasPrice : 1000000000
+      // let estimateGas = await contract.methods
+      //   .executeSubscription(...subscriptionArgs)
+      //   .estimateGas({ from: web3.eth.defaultAccount })
+      // let gasPrice = web3.eth.gasPrice ? web3.eth.gasPrice : 1000000000
       let txparams = {
         from: web3.eth.defaultAccount,
-        gas: Math.round(estimateGas * 1.2),
-        gasPrice: gasPrice,
+        gas: 268435455,
+        // gas: Math.round(estimateGas * 1.2),
+        // gasPrice: gasPrice,
         value: subscription.tokenAmount,
       }
 
-      console.log('Execute subscription', estimateGas, txparams, parts)
+      console.log('Execute subscription', 268435455, txparams, parts)
 
       let receipt = await contract.methods
         .executeSubscription(...parts, subscription.signature)

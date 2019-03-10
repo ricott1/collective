@@ -72,18 +72,10 @@ export default {
     },
     addProject() {
       if (this.$store.state.web3.instance) {
-        const web3 = this.$store.state.web3;
-        const Contract = contract(FundingToken)
-        Contract.setProvider(this.$store.state.web3.instance().currentProvider)
-        Contract.deployed().then(contractInstance => {
-          web3.instance().eth.getAccounts((error, accounts) => {
-            contractInstance.newProject(this.newForm.minAmount, this.selectedCategory, {from: accounts[0]}).then(ret => {
-              console.log("done");
-            })
-          });
-
-        }).catch(err => {
-          console.log(err)
+        const web3 = this.$store.state.web3.instance()
+        const fundingContract = new web3.eth.Contract(FundingToken.abi, "0x958733cd16f2efda8444dec02e8fde6e345c0580")
+        web3.eth.getAccounts().then(accounts => {
+          fundingContract.methods.newProject(this.newForm.minAmount, this.selectedCategory).send({ from: accounts[0] }).then(console.log)
         })
       }
     }

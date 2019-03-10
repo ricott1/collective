@@ -9,6 +9,14 @@
       <h1>Dashboard</h1>
       <p>I have {{ tokensAmount }} tokens</p>
       <p>My actual share</p>
+
+      <h1>Subscribe to our service</h1>
+      <input type="text" name="" v-model="subscribeAmountInput">
+      <button type="button" name="button" @click="subscribe">Confirm</button>
+
+
+
+      <h1>My projects</h1>
       <div v-for="project in projects" :key="project" class="project p-4">
         <img :src="project.logoImage" alt="" width="50px" height="50px" class="project__image" />
         <h5 class="mt-3 font-weight-bold mb-0">{{ project.title }}</h5>
@@ -46,7 +54,8 @@ export default {
   data() {
     return {
       projects: [],
-      tokensAmount: 0
+      tokensAmount: 0,
+      subscribeAmountInput: 0
     }
   },
   components: {
@@ -82,43 +91,47 @@ export default {
     },
     getUserTokens() {
       if (this.$store.state.web3.instance) {
+        const web3 = this.$store.state.web3.instance()
+        const fundingContract = new web3.eth.Contract(FundingToken.abi, "0x958733cd16f2efda8444dec02e8fde6e345c0580")
 
+        web3.eth.getAccounts().then(accounts => {
+          console.log(accounts);
+          fundingContract.methods.balanceOf(accounts[0]).call().then(amount => {
+            this.tokensAmount = amount;
+          })
+        })
+      }
+    },
+    subscribe() {
+      // this.subscribeAmountInput
+      if (this.$store.state.web3.instance) {
+        const web3 = this.$store.state.web3.instance()
+        const subscriptionContract = new web3.eth.Contract(Subscription.abi, "0x0ee8135332bf95db52b6c19b05566fcd766844cd")
+
+        web3.eth.getAccounts().then(accounts => {
+          let parts = [accounts[0], "0x958733cd16f2efda8444dec02e8fde6e345c0580", "0xea7fc784893eb723417946f2e4c52f5359941b0d", this.subscribeAmountInput, '120', '0', '0'];
+          subscriptionContract.methods.getSubscriptionHash(...parts).call().then(hash => {
+            // Sign
+            web3.eth.personal.sign(hash, accounts[0]).then(signature => {
+              const data = {
+                fromAddress: accounts[0],
+                toAddress: "0x958733cd16f2efda8444dec02e8fde6e345c0580",
+                tokenAddress: "0xea7fc784893eb723417946f2e4c52f5359941b0d",
+                tokenAmount: this.subscribeAmountInput,
+                subscriptionHash: hash,
+                contractAddress: "0x958733cd16f2efda8444dec02e8fde6e345c0580",
+                signature
+              }
+              axios.post("http://localhost:9999/subscription", data).then(ret => {
+                console.log(ret);
+              })
+            })
+          })
+        })
       }
     },
     getFundedProjects() {
-      if (this.$store.state.web3.instance) {
-        const web3 = this.$store.state.web3.instance()
-        const Contract = contract(FundingToken)
 
-        console.log("test0")
-        Contract.setProvider(this.$store.state.web3.instance().currentProvider)
-        console.log("test")
-        Contract.deployed()
-          .then(contractInstance => {
-            console.log("test2")
-            web3.eth.getAccounts((error, accounts) => {
-              contractInstance
-                .getFundedProjectCount({ from: accounts[0] })
-                .then(count => {
-                  for (var i = 0; i < count.toNumber(); i++) {
-                    console.log(i)
-                    contractInstance
-                      .getFundedProjectByIndex(i)
-                      .then(ret => {
-                        console.log(ret)
-                        this.projects.push(ret)
-                        // TODO Push project id
-                      })
-                      .catch(err => console.log(err))
-                  }
-                })
-                .catch(err => console.log(err))
-            })
-          })
-          .catch(err => {
-            console.log(err)
-          })
-      }
     },
     loadState() {
       this.getFundedProjects()
@@ -131,6 +144,11 @@ export default {
   watch: {
     isDAppReady() {
       this.loadState()
+      if (this.$store.state.web3.instance) {
+        const web3 = this.$store.state.web3.instance()
+        console.log(web3.version);
+        window.ethereum.enable()
+      }
     }
   }
 }

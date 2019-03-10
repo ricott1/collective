@@ -1851,16 +1851,9 @@
     "name": "solc",
     "version": "0.5.2+commit.1df8f40c.Emscripten.clang"
   },
-  "networks": {
-    "5777": {
-      "events": {},
-      "links": {},
-      "address": "0x958733cd16f2efda8444dec02e8fde6e345c0580",
-      "transactionHash": "0xa0a49a3242a095ec4aa417d807bdfd620705c3f31e6fe6c731ad32a904993195"
-    }
-  },
+  "networks": {},
   "schemaVersion": "3.0.2",
-  "updatedAt": "2019-03-10T01:58:31.394Z",
+  "updatedAt": "2019-03-10T02:28:36.513Z",
   "devdoc": {
     "details": "see https://github.com/ethereum/EIPs/issues/20",
     "methods": {},
