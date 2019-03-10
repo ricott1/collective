@@ -3,17 +3,17 @@
 ## Inspiration
 The crypto ecosystem is famous for innovative crowdfunding mechanisms like ICOs or newer and more sustainable alternatives like GitCoin Grants. However funding decisions are done on an individual level. Without effective coordination of the funders often times many projects end up receiving small and meaningless funding. If the supporters were able to agree on the most important or promising projects, the accumulated small pledges would make a difference for the deserving projects.
 
-Thanks to crypto economics we can explore entirely new ways of crowdfunding. The Collective crowdfunding platform makes it possible to pool funds and allocate them effectively. It implements the Collective Voting Token (CVT) to incentivize early and long-term investment commitment combining a continuos token protocol with a long-term subscription system. 
+Thanks to crypto economics we can explore entirely new ways of crowdfunding. The Collective crowdfunding platform makes it possible to pool funds and allocate them effectively. It implements the Collective Voting Token (CVT) to incentivize early and long-term investment commitment combining a continuos token protocol with a long-term subscription system. The CVT can be exchanged back in any moment for the original DAO token.
 
  The platform could be used to fund single projects or sub-projects, like Ethereum Improvement Proposals for example. 
 
-Collective is inspired by Token Curated Registries: which we advanced by 
+Collective is inspired by Token Curated Registries. Here a community of users is incentivized to 
 
 ## What it does
 Collective is a crowdfunding platform for the crypto ecosystem. It is a web app with an intuitive, Reddit-like UI. Every entry is a project in need for funding. The ranking is determined by the allocation of Voting Tokens, i.e. a Token Curated Registry. Projects have a minimum funding goal they need to achieve. The number of projects that receive funding and the amount they receive is a function of the total size of the funding pool. This ensures that projects only receive funding if a meaningful amount of funds is available. And at the same time to avoid a few projects receiving an excessive amount if the funding pool is large.
 
 You can expand projects to see more details and add a new one by clicking Create Project.
-Funders can pledge monthly investments in DAI. The funds are pooled and paid out to the projects on a monthly basis. In return for his monthly pledge the funder receives Voting Tokens that represent his decision making power on fund allocation. The more he invests, the more Votes he receives. The Votes are minted according to Token Bonding Curves, meaning the sooner he invests, the more Votes he receives. To incentivize long-term commitment, we implemented a modifier that takes into account the number of months he’s been an investor. So, the longer his commitment, the more Votes he receives.
+Funders can pledge monthly investments in DAI. The funds are pooled and paid out to the projects on a monthly basis. In return for his monthly pledge the funder receives CVT that represent his decision making power on fund allocation. The more he invests, the more Votes he receives. The Votes are minted according to Token Bonding Curves, meaning the sooner he invests, the more Votes he receives. To incentivize long-term commitment, we implemented a modifier that takes into account the number of months he’s been an investor. So, the longer his commitment, the more Votes he receives.
 
 The specifications of the Token Bonding Curve make it extremely costly to buy up the majority of the voting power (51% attack), since as the demand increases, the price increases, driving other funders to convert the CVT back for a gain. 
 
