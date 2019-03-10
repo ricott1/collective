@@ -6,25 +6,9 @@
     /> -->
 
     <div class="projects-container pb-4 pl-4 pt-4 m-4 d-flex flex-column align-items-stretch">
-      <h1>Dashboard</h1>
-      <p>I have {{ tokensAmount / 1000000000000000 }} CVT</p>
+      <h2 class="mb-4">Dashboard</h2>
 
-      <h3>Join the economy</h3>
-
-      <div class="d-flex my-4">
-        <div class="">
-          <h5>Suscribe with advantages</h5>
-          <input type="text" name="" v-model="subscribeAmountInput">
-          <button type="button" name="button" class="form-btn" @click="subscribe">Confirm</button>
-        </div>
-        <div class="">
-          <h5>Buy tokens</h5>
-          <input type="text" name="" v-model="buyAmountInput">
-          <button type="button" name="button" class="form-btn" @click="buy">Buy</button>
-        </div>
-      </div>
-
-      <h3>My funded projects</h3>
+      <h4 class="mb-4">My funded projects</h4>
       <div v-for="project in projects" :key="project" class="project p-4">
         <img :src="project.logoImage || 'https://99designs-start-attachments.imgix.net/alchemy-pictures/2016%2F02%2F22%2F04%2F24%2F31%2Fb7bd820a-ecc0-4170-8f4e-3db2e73b0f4a%2F550250_artsigma.png?auto=format&ch=Width%2CDPR&w=250&h=250'" alt="" width="50px" height="50px" class="project__image">
         <h5 class="mt-3 font-weight-bold mb-0">{{ project.title || 'Amazing project' }}</h5>
@@ -33,6 +17,25 @@
 
         <div class="d-flex justify-content-between">
           <div class="tag">{{ Math.round(project.funds / project.min * 100) }}% to minimum</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box p-4 m-4">
+      <h4 class="mb-3">Join the economy</h4>
+      <p>Balance: {{ tokensAmount / 1000000000000000 }} CVT</p>
+
+      <div class="d-flex pr-5 justify-content-between align-items-center home-buying">
+        <div class="">
+          <h4>Suscribe with advantages</h4>
+          <input class="mb-4" type="text" name="" v-model="subscribeAmountInput"><br/>
+          <button type="button" name="button" class="form-btn" @click="subscribe">Confirm</button>
+        </div>
+        <h2>OR</h2>
+        <div class="">
+          <h4>Buy tokens</h4>
+          <input class="mb-4" type="text" name="" v-model="buyAmountInput"><br/>
+          <button type="button" name="button" class="form-btn" @click="buy">Buy</button>
         </div>
       </div>
     </div>
@@ -158,6 +161,7 @@ export default {
 
         web3.eth.getAccounts().then(accounts => {
           fundingContract.methods.getFundedProjectCount(accounts[0]).call().then(count => {
+            this.projects = []
             for (var i = 0; i < count; i++) {
               fundingContract.methods.fundedProjects(accounts[0], i).call().then(address => {
                 fundingContract.methods.getProjectByAddress(address).call().then(project => {
@@ -181,11 +185,11 @@ export default {
   watch: {
     isDAppReady() {
       this.loadState()
-      if (this.$store.state.web3.instance) {
-        const web3 = this.$store.state.web3.instance()
-        console.log(web3.version);
-        window.ethereum.enable()
-      }
+      // if (this.$store.state.web3.instance) {
+      //   const web3 = this.$store.state.web3.instance()
+      //   console.log(web3.version);
+      //   window.ethereum.enable()
+      // }
     }
   }
 }
@@ -198,6 +202,9 @@ import FooterTemplate from './layout/FooterTemplate'
 <style scoped>
 #home {
   width: 100%;
+}
+.home-buying {
+  max-width: 1000px;
 }
 h4 {
   font-size: 1.1rem;

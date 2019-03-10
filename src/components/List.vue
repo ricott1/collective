@@ -7,14 +7,15 @@
     /> -->
 
     <div class="box m-4 p-4">
-      <h4>1. Amount to invest</h4>
+      <h4 class="mb-4">1. Amount to invest</h4>
       <input type="number" name="" v-model="buyAmount" id="mainInput">
     </div>
 
     <div class="projects-container pb-4 pl-4 pt-4 m-4 d-flex flex-column align-items-stretch"  style="overflow: hidden;">
+      <h4 class="mb-4">2. Choose the projects</h4>
       <div v-for="subject in categories" class="mb-4" style="overflow: hidden;">
         <div class="d-flex align-items-baseline">
-          <h3 class="mb-4 mr-3">#{{ subject.title }}</h3>
+          <h4 class="mb-4 mr-3">#{{ subject.title }}</h4>
           <vac :end-time="subject.endDate">
             <span
               slot="process"
@@ -105,6 +106,7 @@ export default {
         const fundingContract = new web3.eth.Contract(FundingToken.abi, "0x958733cd16f2efda8444dec02e8fde6e345c0580")
 
         fundingContract.methods.getProjectCount().call().then(count => {
+          this.projects = []
           for (var i = 0; i < count; i++) {
             let ii = i;
             fundingContract.methods.getProjectByIndex(ii).call().then(ret => {

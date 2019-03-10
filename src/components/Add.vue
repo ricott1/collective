@@ -20,7 +20,7 @@
         </div>
       </div>
 
-      <div class="form--one-line d-flex align-items-center flex-column m-5">
+      <div class="form--one-line d-flex align-items-center flex-column mx-5 mb-5">
         <input type="text" v-model="newForm.title" placeholder="Title">
         <input type="text" v-model="newForm.description" placeholder="Description">
         <input type="text" v-model="newForm.minAmount" placeholder="Minimum amount">
@@ -107,13 +107,14 @@ import HeaderTemplate from './layout/HeaderTemplate'
   }
   .form--one-line input {
       border: 0;
-      border-bottom: 2px solid rgb(204, 204, 204);
+      border-bottom: 1px solid rgb(230, 227, 227);
       outline: none;
       padding: 10px 0;
       font-size: 1.1rem;
       font-weight: 500;
       color: rgb(41, 41, 41);
-      width: 300px;
+      width: 100%;
+      max-width: 500px;
   }
 
 </style>
